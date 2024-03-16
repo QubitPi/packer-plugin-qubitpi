@@ -1,35 +1,68 @@
-# Packer Plugin Scaffolding
+Packer Plugin hashicorp-aws
+===========================
 
-This repository is a template for a Packer multi-component plugin. It is intended as a starting point for creating Packer plugins, containing:
-- A builder ([builder/scaffolding](builder/scaffolding))
-- A provisioner ([provisioner/scaffolding](provisioner/scaffolding))
-- A post-processor ([post-processor/scaffolding](post-processor/scaffolding))
-- A data source ([datasource/scaffolding](datasource/scaffolding))
-- Docs ([docs](docs))
-- A working example ([example](example))
+![Go Badge][Go Badge]
+[![HashiCorp Packer Badge][HashiCorp Packer Badge]][HashiCorp Packer URL]
+![HashiCorp Packer SDK Badge][HashiCorp Packer SDK Badge]
+[![GitHub Workflow Status][GitHub Workflow Status badge]][GitHub Workflow Status URL]
+![GitHub Last Commit]
+[![Apache License][Apache License Badge]][Apache License URL]
 
-These folders contain boilerplate code that you will need to edit to create your own Packer multi-component plugin.
-A full guide to creating Packer plugins can be found at [Extending Packer](https://www.packer.io/docs/plugins/creation).
+The hashicorp-aws multi-component plugin can be used with HashiCorp [Packer][HashiCorp Packer] to create images
+supported by [hashicorp-aws]. For the full list of available features for this plugin see [docs](./docs).
 
-In this repository you will also find a pre-defined GitHub Action configuration for the release workflow
-(`.goreleaser.yml` and `.github/workflows/release.yml`). The release workflow configuration makes sure the GitHub
-release artifacts are created with the correct binaries and naming conventions.
+Installation
+------------
 
-Please see the [GitHub template repository documentation](https://docs.github.com/en/free-pro-team@latest/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template)
-for how to create a new repository from this template on GitHub.
+### Using pre-built releases
 
-## Packer plugin projects
+#### Using the `packer init` command
 
-Here's a non exaustive list of Packer plugins that you can checkout:
+Starting from version 1.7, Packer supports a new `packer init` command allowing automatic installation of Packer
+plugins. Read the [Packer documentation][HashiCorp Packer init] for more information.
 
-* [github.com/hashicorp/packer-plugin-docker](https://github.com/hashicorp/packer-plugin-docker)
-* [github.com/exoscale/packer-plugin-exoscale](https://github.com/exoscale/packer-plugin-exoscale)
-* [github.com/sylviamoss/packer-plugin-comment](https://github.com/sylviamoss/packer-plugin-comment)
-* [github.com/hashicorp/packer-plugin-hashicups](https://github.com/hashicorp/packer-plugin-hashicups)
+To install this plugin, copy and paste this code into Packer configuration. Then, run
+[`packer init`][HashiCorp Packer init].
 
-Looking at their code will give you good examples.
+```hcl
+packer {
+  required_plugins {
+    hashicorp-aws = {
+      version = ">= 0.0.1"
+      source = "github.com/QubitPi/hashicorp-aws"
+    }
+  }
+}
+```
 
-## Setup
+#### Manual installation
+
+We can find pre-built binary releases of the plugin
+[here](https://github.com/QubitPi/packer-plugin-hashicorp-aws/releases). Once we have downloaded the latest archive
+corresponding to our target OS, uncompress it to retrieve the plugin binary file corresponding to our platform. To
+install the plugin, please follow the Packer documentation on
+[installing a plugin][HashiCorp Packer installing a plugin].
+
+### From Sources
+
+If one prefer to build the plugin from sources, clone the GitHub repository locally and run the command `make build`
+from the root directory. Upon successful compilation, a `packer-plugin-hashicorp-aws` plugin binary file can be found in
+the root directory. To install the compiled plugin, please follow the official Packer documentation on
+[installing a plugin][HashiCorp Packer installing a plugin].
+
+### Configuration
+
+For more information on how to configure the plugin, please read the documentation located in the [`docs/`](docs)
+directory.
+
+Contributing
+------------
+
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for best practices and instructions on contributing to hashicorp-aws
+Plugin.
+
+Developing hashicorp-aws Plugin
+-------------------------------
 
 ### The Go Workspace
 
@@ -42,45 +75,30 @@ export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 ```
 
-## Build from source
+### Building from Source
 
-1. Clone this GitHub repository locally.
+1. Clone this GitHub repository locally:
 
-2. Run this command from the root directory:
+   ```shell
+   git clone git@github.com:QubitPi/packer-plugin-hashicorp-aws.git
+   cd packer-plugin-hashicorp-aws
+   ```
 
-```shell 
-make build
-```
+2. Build the plugin from the root directory:
 
-3. After you successfully compile, the `packer-plugin-scaffolding` plugin binary file is in the root directory.
+   ```shell 
+   make build
+   ```
+   
+   After we successfully compile, the `packer-plugin-hashicorp-aws` plugin binary file is in the root directory.
 
-4. To install the compiled plugin, run the following command
+### Running Acceptance Tests
 
-```shell
-packer plugins install --path packer-plugin-scaffolding github.com/hashicorp/scaffolding
-```
-
-### Build on *nix systems
-Unix like systems with the make, sed, and grep commands installed can use the `make dev` to execute the build from source steps.
-
-### Build on Windows Powershell
-The preferred solution for building on Windows are steps 2-4 listed above.
-If you would prefer to script the building process you can use the following as a guide
-
-```powershell
-$MODULE_NAME = (Get-Content go.mod | Where-Object { $_ -match "^module"  }) -replace 'module ',''
-$FQN = $MODULE_NAME -replace 'packer-plugin-',''
-go build -ldflags="-X $MODULE_NAME/version.VersionPrerelease=dev" -o packer-plugin-scaffolding.exe
-packer plugins install --path packer-plugin-scaffolding.exe $FQN
-```
-
-## Running Acceptance Tests
-
-Make sure to install the plugin locally using the steps in [Build from source](#build-from-source).
+Make sure to install the plugin locally using the steps in [Build from source](#building-from-source).
 
 Once everything needed is set up, run:
 
-```
+```shell
 make test
 ```
 
@@ -97,10 +115,31 @@ Registering a plugin as an integration requires [metadata configuration](./metad
 repository and approval by the Packer team. To initiate the process of registering your
 plugin as a Packer integration refer to the [Developing Plugins](https://developer.hashicorp.com/packer/docs/plugins/creation#registering-plugins) page.
 
-# Requirements
+License
+-------
 
--	[packer-plugin-sdk](https://github.com/hashicorp/packer-plugin-sdk) >= v0.5.2
--	[Go](https://golang.org/doc/install) >= 1.20
+The use and distribution terms for [packer-plugin-hashicorp-aws] are covered by the [Apache License, Version 2.0].
 
-## Packer Compatibility
-This scaffolding template is compatible with Packer >= v1.10.2
+<div align="center">
+    <a href="https://opensource.org/licenses">
+        <img align="center" width="50%" alt="License Illustration" src="https://github.com/QubitPi/QubitPi/blob/master/img/apache-2.png?raw=true">
+    </a>
+</div>
+
+[Apache License Badge]: https://img.shields.io/badge/Apache%202.0-F25910.svg?style=for-the-badge&logo=Apache&logoColor=white
+[Apache License URL]: https://www.apache.org/licenses/LICENSE-2.0
+[Apache License, Version 2.0]: http://www.apache.org/licenses/LICENSE-2.0.html
+
+[GitHub Last Commit]: https://img.shields.io/github/last-commit/QubitPi/packer-plugin-hashicorp-aws/master?logo=github&style=for-the-badge
+[GitHub Workflow Status badge]: https://img.shields.io/github/actions/workflow/status/QubitPi/packer-plugin-hashicorp-aws/ci-cd.yml?branch=master&logo=github&style=for-the-badge
+[GitHub Workflow Status URL]: https://github.com/QubitPi/packer-plugin-hashicorp-aws/actions/workflows/ci-cd.yml
+[Go Badge]: https://img.shields.io/badge/Go%20>=%201.20-00ADD8?style=for-the-badge&logo=go&logoColor=white
+
+[hashicorp-aws]: https://qubitpi.github.io/hashicorp-aws/
+[HashiCorp Packer]: https://qubitpi.github.io/hashicorp-packer/packer/docs
+[HashiCorp Packer init]: https://qubitpi.github.io/hashicorp-packer/packer/docs/commands/init
+[HashiCorp Packer installing a plugin]: https://qubitpi.github.io/hashicorp-packer/packer/docs/plugins#installing-plugins
+[HashiCorp Packer SDK Badge]: https://img.shields.io/badge/Packer%20Plugin%20SDK>=%20v0.5.2-000000?style=for-the-badge&logo=hashicorp&logoColor=white
+[HashiCorp Packer SDK URL]: https://github.com/hashicorp/packer-plugin-sdk
+[HashiCorp Packer Badge]: https://img.shields.io/badge/Packer%20>=%20v1.10.2-02A8EF?style=for-the-badge&logo=Packer&logoColor=white
+[HashiCorp Packer URL]: https://qubitpi.github.io/hashicorp-packer/packer/docs
