@@ -1,4 +1,4 @@
-module github.com/hashicorp/packer-plugin-scaffolding
+module github.com/QubitPi/packer-plugin-hashicorp-aws
 
 go 1.20
 

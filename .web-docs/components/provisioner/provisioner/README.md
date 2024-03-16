@@ -1,17 +1,24 @@
+Type: `kong-api-gateway`
+
+<!--
   Include a short description about the provisioner. This is a good place
   to call out what the provisioner does, and any additional text that might
-  be helpful to a user. See https://www.packer.io/docs/provisioner/null
+  be helpful to a user. See https://www.packer.io/docs/provisioners/null
 -->
 
-The scaffolding provisioner is used to provisioner Packer builds.
+The kong-api-gateway provisioner is used to provisioner Packer builds.
 
 
 <!-- Provisioner Configuration Fields -->
 
 **Required**
 
-- `mock` (string) - The name of the mock string to display.
-
+- `sslCertSource` (string) - The path to the local SSL certificate file to upload to the machine. The path can be
+  absolute or relative. If it is relative, it is relative to the working directory when Packer is executed.
+- `sslCertKeySource` (string) - The path to the local SSL certificate key file to upload to the machine. The path can be
+  absolute or relative. If it is relative, it is relative to the working directory when Packer is executed.
+- `kongApiGatewayDomain` (string) - the SSL-enabled domain that will serve the
+  [various ports of Kong gateway](https://qubitpi.github.io/docs.konghq.com/gateway/latest/production/networking/default-ports/)
 
 <!--
   Optional Configuration Fields
@@ -23,27 +30,66 @@ The scaffolding provisioner is used to provisioner Packer builds.
 
 **Optional**
 
+- `sslCertDestination` (string) - The path where the SSL certificate file will be uploaded to in the machine. This value
+  must be a writable location and any parent directories must already exist. If the provisioning user (generally not
+  root) cannot write to this directory, one will receive a "Permission Denied" error. If we set the destination as a
+  directory, at least make sure that the destination ends in a trailing slash so that Packer knows to use the source's
+  basename in the final upload path. Failure to do so may cause Packer to fail on file uploads. If the destination file
+  already exists, it will be overwritten.
+- `sslCertKeyDestination` (string) - The path where the SSL certificate key file will be uploaded to in the machine.
+  This value must be a writable location and any parent directories must already exist. If the provisioning user
+  (generally not root) cannot write to this directory, one will receive a "Permission Denied" error. If we set the
+  destination as a directory, at least make sure that the destination ends in a trailing slash so that Packer knows to
+  use the source's basename in the final upload path. Failure to do so may cause Packer to fail on file uploads. If the
+  destination file already exists, it will be overwritten.
+- `homeDir` (string) - The `$Home` (without) directory in AMI image, such as `/home/ubuntu`
 
 <!--
   A basic example on the usage of the provisioner. Multiple examples
   can be provided to highlight various configurations.
 
 -->
+
 ### Example Usage
 
-
 ```hcl
- source "null" "example" {
-   communicator = "none"
- }
+source "amazon-ebs" "kong" {
+  ami_name = "my-kong-api-gateway"
+  force_deregister = "true"
+  force_delete_snapshot = "true"
+  skip_create_ami = "false"
 
- build {
-   source "null.example" {
-     name = "jay"
-   }
+  instance_type = "t2.large"
+  launch_block_device_mappings {
+    device_name = "/dev/sda1"
+    volume_size = 8
+    volume_type = "gp2"
+    delete_on_termination = true
+  }
+  region = "us-east-1"
+  source_ami_filter {
+    filters = {
+      name = "ubuntu/images/*ubuntu-*-22.04-amd64-server-*"
+      root-device-type = "ebs"
+      virtualization-type = "hvm"
+    }
+    most_recent = true
+    owners = ["099720109477"]
+  }
+  ssh_username = "ubuntu"
+}
 
-   provisioner "scaffolding" {
-     mock = "mocking ${source.name}"
-   }
- }
+build {
+  name = "install-kong"
+  sources = [
+    "amazon-ebs.kong"
+  ]
+
+  provisioner "hashicorp-aws-kong-api-gateway-provisioner" {
+    homeDir = "/home/ubuntu"
+    sslCertSource = "/abs/or/rel/path/to/ssl-cert-file"
+    sslCertKeySource = "/abs/or/rel/path/to/ssl-cert-key-file"
+    kongApiGatewayDomain = "mykongdomain.com"
+  }
+}
 ```
