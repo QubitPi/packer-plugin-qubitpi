@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func ProvisionUpload(ui packersdk.Ui, communicator packersdk.Communicator, dst string, src string) error {
+func ProvisionUpload(ui packersdk.Ui, communicator packersdk.Communicator, src string, dst string) error {
 	ui.Say(fmt.Sprintf("Uploading %s => %s", src, dst))
 
 	info, err := os.Stat(src)
