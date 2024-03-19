@@ -62,7 +62,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	}
 
 	if p.config.SslCertKeyDestination == "" {
-		p.config.SslCertDestination = fmt.Sprintf(filepath.Join(p.config.HomeDir, "ssl.key"))
+		p.config.SslCertKeyDestination = fmt.Sprintf(filepath.Join(p.config.HomeDir, "ssl.key"))
 	}
 	err = p.ProvisionUpload(ui, communicator, p.config.SslCertKeySource, p.config.SslCertKeyDestination)
 	if err != nil {
