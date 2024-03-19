@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/hashicorp/packer-plugin-sdk/tmp"
+	"path/filepath"
 	"strings"
 )
 
@@ -53,7 +54,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	}
 
 	if p.config.SslCertDestination == "" {
-		p.config.SslCertDestination = fmt.Sprintf("%s/ssl.crt", p.config.HomeDir)
+		p.config.SslCertDestination = fmt.Sprintf(filepath.Join(p.config.HomeDir, "ssl.crt"))
 	}
 	err := p.ProvisionUpload(ui, communicator, p.config.SslCertSource, p.config.SslCertDestination)
 	if err != nil {
@@ -61,7 +62,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	}
 
 	if p.config.SslCertKeyDestination == "" {
-		p.config.SslCertDestination = fmt.Sprintf("%s/ssl.key", p.config.HomeDir)
+		p.config.SslCertDestination = fmt.Sprintf(filepath.Join(p.config.HomeDir, "ssl.key"))
 	}
 	err = p.ProvisionUpload(ui, communicator, p.config.SslCertKeySource, p.config.SslCertKeyDestination)
 	if err != nil {
