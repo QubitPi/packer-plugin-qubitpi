@@ -1,4 +1,4 @@
-// Copyright (c) HashiCorp, Inc.
+// Copyright (c) Jiaqi Liu
 // SPDX-License-Identifier: MPL-2.0
 
 //go:generate packer-sdc mapstructure-to-hcl2 -type Config
@@ -19,11 +19,8 @@ import (
 )
 
 type Config struct {
-	SslCertSource      string `mapstructure:"sslCertSource" required:"true"`
-	SslCertDestination string `mapstructure:"sslCertDestination" required:"false"`
-
-	SslCertKeySource      string `mapstructure:"sslCertKeySource" required:"true"`
-	SslCertKeyDestination string `mapstructure:"sslCertKeyDestination" required:"false"`
+	SslCertSource    string `mapstructure:"sslCertSource" required:"true"`
+	SslCertKeySource string `mapstructure:"sslCertKeySource" required:"true"`
 
 	KongApiGatewayDomain string `mapstructure:"kongApiGatewayDomain" required:"true"`
 	HomeDir              string `mapstructure:"homeDir" required:"false"`
@@ -49,24 +46,18 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 }
 
 func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, generatedData map[string]interface{}) error {
-	if p.config.HomeDir == "" {
-		p.config.HomeDir = "/home/ubuntu"
+	p.config.HomeDir = getHomeDir(p.config.HomeDir)
+
+	sslCertDestination := fmt.Sprintf(filepath.Join(p.config.HomeDir, "ssl.crt"))
+	err := p.ProvisionUpload(ui, communicator, p.config.SslCertSource, sslCertDestination)
+	if err != nil {
+		return fmt.Errorf("error uploading '%s' to '%s': %s", p.config.SslCertSource, sslCertDestination, err)
 	}
 
-	if p.config.SslCertDestination == "" {
-		p.config.SslCertDestination = fmt.Sprintf(filepath.Join(p.config.HomeDir, "ssl.crt"))
-	}
-	err := p.ProvisionUpload(ui, communicator, p.config.SslCertSource, p.config.SslCertDestination)
+	sslCertKeyDestination := fmt.Sprintf(filepath.Join(p.config.HomeDir, "ssl.key"))
+	err = p.ProvisionUpload(ui, communicator, p.config.SslCertKeySource, sslCertKeyDestination)
 	if err != nil {
-		return fmt.Errorf("error uploading '%s' to '%s': %s", p.config.SslCertSource, p.config.SslCertDestination, err)
-	}
-
-	if p.config.SslCertKeyDestination == "" {
-		p.config.SslCertKeyDestination = fmt.Sprintf(filepath.Join(p.config.HomeDir, "ssl.key"))
-	}
-	err = p.ProvisionUpload(ui, communicator, p.config.SslCertKeySource, p.config.SslCertKeyDestination)
-	if err != nil {
-		return fmt.Errorf("error uploading '%s' to '%s': %s", p.config.SslCertKeySource, p.config.SslCertKeyDestination, err)
+		return fmt.Errorf("error uploading '%s' to '%s': %s", p.config.SslCertKeySource, sslCertKeyDestination, err)
 	}
 
 	nginxConfig := strings.Replace(getNginxConfigTemplate(), "kong.domain.com", p.config.KongApiGatewayDomain, -1)
@@ -106,6 +97,14 @@ func (p *Provisioner) ProvisionUpload(ui packersdk.Ui, communicator packersdk.Co
 	}
 
 	return provisioner.ProvisionUpload(ui, communicator, src, dst)
+}
+
+func getHomeDir(configValue string) string {
+	if configValue == "" {
+		return "/home/ubuntu"
+	}
+
+	return configValue
 }
 
 func getCommands(homeDir string) []string {

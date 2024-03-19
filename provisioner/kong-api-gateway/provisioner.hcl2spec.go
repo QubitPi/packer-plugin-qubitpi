@@ -10,12 +10,10 @@ import (
 // FlatConfig is an auto-generated flat version of Config.
 // Where the contents of a field with a `mapstructure:,squash` tag are bubbled up.
 type FlatConfig struct {
-	SslCertSource         *string `mapstructure:"sslCertSource" required:"true" cty:"sslCertSource" hcl:"sslCertSource"`
-	SslCertDestination    *string `mapstructure:"sslCertDestination" required:"false" cty:"sslCertDestination" hcl:"sslCertDestination"`
-	SslCertKeySource      *string `mapstructure:"sslCertKeySource" required:"true" cty:"sslCertKeySource" hcl:"sslCertKeySource"`
-	SslCertKeyDestination *string `mapstructure:"sslCertKeyDestination" required:"false" cty:"sslCertKeyDestination" hcl:"sslCertKeyDestination"`
-	KongApiGatewayDomain  *string `mapstructure:"kongApiGatewayDomain" required:"true" cty:"kongApiGatewayDomain" hcl:"kongApiGatewayDomain"`
-	HomeDir               *string `mapstructure:"homeDir" required:"false" cty:"homeDir" hcl:"homeDir"`
+	SslCertSource        *string `mapstructure:"sslCertSource" required:"true" cty:"sslCertSource" hcl:"sslCertSource"`
+	SslCertKeySource     *string `mapstructure:"sslCertKeySource" required:"true" cty:"sslCertKeySource" hcl:"sslCertKeySource"`
+	KongApiGatewayDomain *string `mapstructure:"kongApiGatewayDomain" required:"true" cty:"kongApiGatewayDomain" hcl:"kongApiGatewayDomain"`
+	HomeDir              *string `mapstructure:"homeDir" required:"false" cty:"homeDir" hcl:"homeDir"`
 }
 
 // FlatMapstructure returns a new FlatConfig.
@@ -30,12 +28,10 @@ func (*Config) FlatMapstructure() interface{ HCL2Spec() map[string]hcldec.Spec }
 // The decoded values from this spec will then be applied to a FlatConfig.
 func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 	s := map[string]hcldec.Spec{
-		"sslCertSource":         &hcldec.AttrSpec{Name: "sslCertSource", Type: cty.String, Required: false},
-		"sslCertDestination":    &hcldec.AttrSpec{Name: "sslCertDestination", Type: cty.String, Required: false},
-		"sslCertKeySource":      &hcldec.AttrSpec{Name: "sslCertKeySource", Type: cty.String, Required: false},
-		"sslCertKeyDestination": &hcldec.AttrSpec{Name: "sslCertKeyDestination", Type: cty.String, Required: false},
-		"kongApiGatewayDomain":  &hcldec.AttrSpec{Name: "kongApiGatewayDomain", Type: cty.String, Required: false},
-		"homeDir":               &hcldec.AttrSpec{Name: "homeDir", Type: cty.String, Required: false},
+		"sslCertSource":        &hcldec.AttrSpec{Name: "sslCertSource", Type: cty.String, Required: false},
+		"sslCertKeySource":     &hcldec.AttrSpec{Name: "sslCertKeySource", Type: cty.String, Required: false},
+		"kongApiGatewayDomain": &hcldec.AttrSpec{Name: "kongApiGatewayDomain", Type: cty.String, Required: false},
+		"homeDir":              &hcldec.AttrSpec{Name: "homeDir", Type: cty.String, Required: false},
 	}
 	return s
 }

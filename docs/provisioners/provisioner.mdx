@@ -30,18 +30,6 @@ The kong-api-gateway provisioner is used to provisioner Packer builds.
 
 **Optional**
 
-- `sslCertDestination` (string) - The path where the SSL certificate file will be uploaded to in the machine. This value
-  must be a writable location and any parent directories must already exist. If the provisioning user (generally not
-  root) cannot write to this directory, one will receive a "Permission Denied" error. If we set the destination as a
-  directory, at least make sure that the destination ends in a trailing slash so that Packer knows to use the source's
-  basename in the final upload path. Failure to do so may cause Packer to fail on file uploads. If the destination file
-  already exists, it will be overwritten.
-- `sslCertKeyDestination` (string) - The path where the SSL certificate key file will be uploaded to in the machine.
-  This value must be a writable location and any parent directories must already exist. If the provisioning user
-  (generally not root) cannot write to this directory, one will receive a "Permission Denied" error. If we set the
-  destination as a directory, at least make sure that the destination ends in a trailing slash so that Packer knows to
-  use the source's basename in the final upload path. Failure to do so may cause Packer to fail on file uploads. If the
-  destination file already exists, it will be overwritten.
 - `homeDir` (string) - The `$Home` (without) directory in AMI image, such as `/home/ubuntu`
 
 <!--
