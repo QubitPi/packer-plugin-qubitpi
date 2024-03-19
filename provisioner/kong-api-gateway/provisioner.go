@@ -79,9 +79,10 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 		return err
 	}
 	nginxConfig = ""
-	err = p.ProvisionUpload(ui, communicator, file.Name(), "/home/ubuntu/nginx-ssl.conf")
+	nginxDst := fmt.Sprintf(filepath.Join(p.config.HomeDir, "nginx-ssl.conf"))
+	err = p.ProvisionUpload(ui, communicator, file.Name(), nginxDst)
 	if err != nil {
-		return fmt.Errorf("error uploading '%s' to '%s': %s", file.Name(), "/home/ubuntu/nginx-ssl.conf", err)
+		return fmt.Errorf("error uploading '%s' to '%s': %s", file.Name(), nginxDst, err)
 	}
 	for _, command := range getCommands(p.config.HomeDir) {
 		err := (&packersdk.RemoteCmd{Command: command}).RunWithUi(ctx, communicator, ui)
