@@ -14,7 +14,7 @@ type FlatConfig struct {
 	SslCertDestination    *string `mapstructure:"sslCertDestination" required:"false" cty:"sslCertDestination" hcl:"sslCertDestination"`
 	SslCertKeySource      *string `mapstructure:"sslCertKeySource" required:"true" cty:"sslCertKeySource" hcl:"sslCertKeySource"`
 	SslCertKeyDestination *string `mapstructure:"sslCertKeyDestination" required:"false" cty:"sslCertKeyDestination" hcl:"sslCertKeyDestination"`
-	KongGatewayDomain     *string `mapstructure:"kongGatewayDomain" required:"true" cty:"kongGatewayDomain" hcl:"kongGatewayDomain"`
+	KongApiGatewayDomain  *string `mapstructure:"kongApiGatewayDomain" required:"true" cty:"kongApiGatewayDomain" hcl:"kongApiGatewayDomain"`
 	HomeDir               *string `mapstructure:"homeDir" required:"false" cty:"homeDir" hcl:"homeDir"`
 }
 
@@ -34,7 +34,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"sslCertDestination":    &hcldec.AttrSpec{Name: "sslCertDestination", Type: cty.String, Required: false},
 		"sslCertKeySource":      &hcldec.AttrSpec{Name: "sslCertKeySource", Type: cty.String, Required: false},
 		"sslCertKeyDestination": &hcldec.AttrSpec{Name: "sslCertKeyDestination", Type: cty.String, Required: false},
-		"kongGatewayDomain":     &hcldec.AttrSpec{Name: "kongGatewayDomain", Type: cty.String, Required: false},
+		"kongApiGatewayDomain":  &hcldec.AttrSpec{Name: "kongApiGatewayDomain", Type: cty.String, Required: false},
 		"homeDir":               &hcldec.AttrSpec{Name: "homeDir", Type: cty.String, Required: false},
 	}
 	return s
