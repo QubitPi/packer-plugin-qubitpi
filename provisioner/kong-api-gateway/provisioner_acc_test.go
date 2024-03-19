@@ -28,7 +28,7 @@ func TestAccKongApiGatewayProvisioner(t *testing.T) {
 			return nil
 		},
 		Template: testProvisionerHCL2Basic,
-		Type:     "kong-kong-provisioner",
+		Type:     "kong-api-gateway-provisioner",
 		Check: func(buildCommand *exec.Cmd, logfile string) error {
 			if buildCommand.ProcessState != nil {
 				if buildCommand.ProcessState.ExitCode() != 0 {

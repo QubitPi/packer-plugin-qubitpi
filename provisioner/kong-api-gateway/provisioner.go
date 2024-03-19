@@ -48,8 +48,12 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 }
 
 func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, generatedData map[string]interface{}) error {
+	if p.config.HomeDir == "" {
+		p.config.HomeDir = "/home/ubuntu"
+	}
+
 	if p.config.SslCertDestination == "" {
-		p.config.SslCertDestination = "/home/ubuntu/ssl.crt"
+		p.config.SslCertDestination = fmt.Sprintf("%s/ssl.crt", p.config.HomeDir)
 	}
 	err := p.ProvisionUpload(ui, communicator, p.config.SslCertSource, p.config.SslCertDestination)
 	if err != nil {
@@ -57,7 +61,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	}
 
 	if p.config.SslCertKeyDestination == "" {
-		p.config.SslCertKeyDestination = "/home/ubuntu/ssl.key"
+		p.config.SslCertDestination = fmt.Sprintf("%s/ssl.key", p.config.HomeDir)
 	}
 	err = p.ProvisionUpload(ui, communicator, p.config.SslCertKeySource, p.config.SslCertKeyDestination)
 	if err != nil {
@@ -78,11 +82,6 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", file.Name(), "/home/ubuntu/nginx-ssl.conf", err)
 	}
-
-	if p.config.HomeDir == "" {
-		p.config.HomeDir = "/home/ubuntu"
-	}
-
 	for _, command := range getCommands(p.config.HomeDir) {
 		err := (&packersdk.RemoteCmd{Command: command}).RunWithUi(ctx, communicator, ui)
 		if err != nil {
