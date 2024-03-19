@@ -1,9 +1,6 @@
-Type: `kong-api-gateway`
-
-<!--
   Include a short description about the provisioner. This is a good place
   to call out what the provisioner does, and any additional text that might
-  be helpful to a user. See https://www.packer.io/docs/provisioners/null
+  be helpful to a user. See https://www.packer.io/docs/provisioner/null
 -->
 
 The kong-api-gateway provisioner is used to provisioner Packer builds.
@@ -18,7 +15,7 @@ The kong-api-gateway provisioner is used to provisioner Packer builds.
 - `sslCertKeySource` (string) - The path to the local SSL certificate key file to upload to the machine. The path can be
   absolute or relative. If it is relative, it is relative to the working directory when Packer is executed.
 - `kongApiGatewayDomain` (string) - the SSL-enabled domain that will serve the
-  [various ports of Kong gateway](https://qubitpi.github.io/docs.konghq.com/gateway/latest/production/networking/default-ports/)
+   [various ports of Kong gateway](https://qubitpi.github.io/docs.konghq.com/gateway/latest/production/networking/default-ports/)
 
 <!--
   Optional Configuration Fields
