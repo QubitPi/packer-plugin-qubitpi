@@ -75,6 +75,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", file.Name(), nginxDst, err)
 	}
+
 	for _, command := range getCommands(p.config.HomeDir) {
 		err := (&packersdk.RemoteCmd{Command: command}).RunWithUi(ctx, communicator, ui)
 		if err != nil {

@@ -3,7 +3,7 @@
   be helpful to a user. See https://www.packer.io/docs/provisioner/null
 -->
 
-The kong-api-gateway provisioner is used to provisioner Packer builds.
+The docker-mailserver provisioner is used to provision Packer builds for docker-mailserver AMI.
 
 
 <!-- Provisioner Configuration Fields -->
@@ -14,8 +14,8 @@ The kong-api-gateway provisioner is used to provisioner Packer builds.
   absolute or relative. If it is relative, it is relative to the working directory when Packer is executed.
 - `sslCertKeySource` (string) - The path to the local SSL certificate key file to upload to the machine. The path can be
   absolute or relative. If it is relative, it is relative to the working directory when Packer is executed.
-- `kongApiGatewayDomain` (string) - the SSL-enabled domain that will serve the
-   [various ports of Kong gateway](https://qubitpi.github.io/docs.konghq.com/gateway/latest/production/networking/default-ports/)
+- `baseDomain` (string) - The base domain name of the MX record. For example, if base domain is 'mycompany.com', the
+  generated MX record will be 'mail.mycompany.com'
 
 <!--
   Optional Configuration Fields
@@ -27,7 +27,7 @@ The kong-api-gateway provisioner is used to provisioner Packer builds.
 
 **Optional**
 
-- `homeDir` (string) - The `$Home` (without) directory in AMI image, such as `/home/ubuntu`
+- `homeDir` (string) - The `$Home` directory in AMI image; default to `/home/ubuntu`
 
 <!--
   A basic example on the usage of the provisioner. Multiple examples
@@ -38,13 +38,13 @@ The kong-api-gateway provisioner is used to provisioner Packer builds.
 ### Example Usage
 
 ```hcl
-source "amazon-ebs" "kong" {
-  ami_name = "my-kong-api-gateway"
+source "amazon-ebs" "docker-mailserver" {
+  ami_name = "my-docker-mailserver-ami"
   force_deregister = "true"
   force_delete_snapshot = "true"
   skip_create_ami = "false"
 
-  instance_type = "t2.large"
+  instance_type = "t2.micro"
   launch_block_device_mappings {
     device_name = "/dev/sda1"
     volume_size = 8
@@ -65,16 +65,16 @@ source "amazon-ebs" "kong" {
 }
 
 build {
-  name = "install-kong"
+  name = "install-docker-mailserver"
   sources = [
-    "amazon-ebs.kong"
+    "amazon-ebs.docker-mailserver"
   ]
 
-  provisioner "hashicorp-aws-kong-api-gateway-provisioner" {
+  provisioner "hashicorp-aws-docker-mailserver-provisioner" {
     homeDir = "/home/ubuntu"
     sslCertSource = "/abs/or/rel/path/to/ssl-cert-file"
     sslCertKeySource = "/abs/or/rel/path/to/ssl-cert-key-file"
-    kongApiGatewayDomain = "mykongdomain.com"
+    baseDomain = "mycompany.com"
   }
 }
 ```
