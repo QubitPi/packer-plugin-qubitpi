@@ -150,15 +150,13 @@ func getCommands(homeDir string, sslCertDestination string, sslCertKeyDestinatio
 		"sudo apt update && sudo apt upgrade -y",
 		"sudo apt install software-properties-common -y",
 
-		"git clone https://github.com/docker/docker-install.git",
-		"cd docker-install",
-		"sh install.sh",
+		"curl -fsSL https://get.docker.com -o get-docker.sh",
+		"sh get-docker.sh",
 
 		fmt.Sprintf("sudo mkdir -p %s", certsDir),
 		fmt.Sprintf("sudo mv %s %s", sslCertDestination, certsDir),
 		fmt.Sprintf("sudo mv %s %s", sslCertKeyDestination, certsDir),
 
-		"DMS_GITHUB_URL=\"https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master\"",
-		"wget \"${DMS_GITHUB_URL}/mailserver.env\"",
+		"wget \"https://raw.githubusercontent.com/docker-mailserver/docker-mailserver/master/mailserver.env\"",
 	}
 }
