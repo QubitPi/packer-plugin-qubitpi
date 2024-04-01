@@ -77,7 +77,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 		return fmt.Errorf("error uploading '%s' to '%s': %s", file.Name(), composeFileDst, err)
 	}
 
-	for _, command := range getCommands(p.config.HomeDir, sslCertDestination, sslCertKeyDestination) {
+	for _, command := range getCommands(p.config.HomeDir, "mail."+p.config.BaseDomain, sslCertDestination, sslCertKeyDestination) {
 		err := (&packersdk.RemoteCmd{Command: command}).RunWithUi(ctx, communicator, ui)
 		if err != nil {
 			return err
@@ -129,7 +129,7 @@ services:
       - ./docker-data/dms/mail-logs/:/var/log/mail/
       - ./docker-data/dms/config/:/tmp/docker-mailserver/
       - /etc/localtime:/etc/localtime:ro
-      - ./docker-data/dms/custom-certs/:/tmp/dms/custom-certs/:ro
+      - ./docker-data/certbot/certs/:/etc/letsencrypt
     restart: always
     stop_grace_period: 1m
     healthcheck:
@@ -137,14 +137,12 @@ services:
       timeout: 3s
       retries: 0
     environment:
-      - SSL_TYPE=manual
-      - SSL_CERT_PATH=/tmp/dms/custom-certs/fullchain.pem
-      - SSL_KEY_PATH=/tmp/dms/custom-certs/privkey.pem
+      - SSL_TYPE=letsencrypt
     `
 }
 
-func getCommands(homeDir string, sslCertDestination string, sslCertKeyDestination string) []string {
-	certsDir := filepath.Join(homeDir, "docker-data/dms/custom-certs")
+func getCommands(homeDir string, domain string, sslCertDestination string, sslCertKeyDestination string) []string {
+	certsDir := filepath.Join(homeDir, fmt.Sprintf("docker-data/certbot/certs/live/%s", domain))
 
 	return []string{
 		"sudo apt update && sudo apt upgrade -y",
