@@ -43,6 +43,6 @@ jobs:
 
   release:
     needs: [tests]
-    if: ${{ github.ref == 'refs/heads/master' && github.repository != 'qing-wq/packer-plugin-paion-data' }}
+    if: ${{ github.ref == 'refs/heads/master' && github.repository != 'QubitPi/hashicorp-packer-plugin-scaffolding' }}
     uses: ./.github/workflows/release.yml
     secrets: inherit
