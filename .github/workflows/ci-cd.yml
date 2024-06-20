@@ -25,9 +25,20 @@ jobs:
           echo "Found Go $(cat .go-version)"
           echo "go-version=$(cat .go-version)" >> $GITHUB_OUTPUT
 
+  gorelease-config-check:
+    name: Checking if gorelease configuration is valid
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
+          sudo apt update
+          sudo apt install goreleaser -y
+          goreleaser check .goreleaser.yml
+
   tests:
     name: Go Tests
-    needs: [test-example, get-go-version]
+    needs: [test-example, get-go-version, gorelease-config-check]
     outputs:
       outcome: ${{ job.status }}
     continue-on-error: true
