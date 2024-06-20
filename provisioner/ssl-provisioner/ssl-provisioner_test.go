@@ -1,7 +1,7 @@
 // Copyright (c) Jiaqi Liu
 // SPDX-License-Identifier: MPL-2.0
 
-package kongApiGateway
+package sslProvisioner
 
 import "testing"
 
@@ -17,7 +17,7 @@ func Test_getHomeDir(t *testing.T) {
 
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
-			actual := getHomeDir(d.configValue)
+			actual := GetHomeDir(d.configValue)
 			if actual != d.expected {
 				t.Errorf("Expected %s, got %s", d.expected, actual)
 			}
