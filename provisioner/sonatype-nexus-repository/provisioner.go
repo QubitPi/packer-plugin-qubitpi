@@ -3,7 +3,7 @@
 
 //go:generate packer-sdc mapstructure-to-hcl2 -type Config
 
-package kongApiGateway
+package sonatypeNexusRepository
 
 import (
 	"bytes"
@@ -17,11 +17,14 @@ import (
 	"text/template"
 )
 
+// PORT Default port of Sonatype Nexus
+const PORT int = 8081
+
 type Config struct {
-	SslCertBase64        string `mapstructure:"sslCertBase64" required:"true"`
-	SslCertKeyBase64     string `mapstructure:"sslCertKeyBase64" required:"true"`
-	KongApiGatewayDomain string `mapstructure:"kongApiGatewayDomain" required:"true"`
-	HomeDir              string `mapstructure:"homeDir" required:"false"`
+	SslCertBase64                 string `mapstructure:"sslCertBase64" required:"true"`
+	SslCertKeyBase64              string `mapstructure:"sslCertKeyBase64" required:"true"`
+	SonatypeNexusRepositoryDomain string `mapstructure:"sonatypeNexusRepositoryDomain" required:"true"`
+	HomeDir                       string `mapstructure:"homeDir" required:"false"`
 
 	ctx interpolate.Context
 }
@@ -45,7 +48,7 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 
 func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, generatedData map[string]interface{}) error {
 	p.config.HomeDir = sslProvisioner.GetHomeDir(p.config.HomeDir)
-	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, getNginxConfig(p.config.KongApiGatewayDomain), getCommands(p.config.HomeDir))
+	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, getNginxConfig(p.config.SonatypeNexusRepositoryDomain), getCommands(p.config.HomeDir))
 }
 
 func getCommands(homeDir string) []string {
@@ -56,7 +59,7 @@ func getCommands(homeDir string) []string {
 		"curl -fsSL https://get.docker.com -o get-docker.sh",
 		"sh get-docker.sh",
 
-		"git clone https://github.com/QubitPi/docker-kong.git",
+		"docker volume create --name nexus-data",
 
 		"sudo apt install -y nginx",
 		fmt.Sprintf("sudo mv %s/nginx-ssl.conf %s", homeDir, sslProvisioner.NGINX_CONFIG_PATH),
@@ -70,33 +73,35 @@ func getNginxConfig(domain string) string {
 		Domain         string
 		SslCertPath    string
 		SslCertKeyPath string
-	}{domain, sslProvisioner.SSL_CERT_PATH, sslProvisioner.SSL_CERT_KEY_PATH}
+		Port           string
+	}{domain, sslProvisioner.SSL_CERT_PATH, sslProvisioner.SSL_CERT_KEY_PATH, string(rune(PORT))}
 	var buf bytes.Buffer
 	t := template.Must(template.New("Nginx Config").Parse(`
 server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+	listen 80 default_server;
+	listen [::]:80 default_server;
 
-    root /var/www/html;
+	root /var/www/html;
 
-    index index.html index.htm index.nginx-debian.html;
+	index index.html index.htm index.nginx-debian.html;
 
-    server_name _;
+	server_name _;
 
-    location / {
-        try_files $uri $uri/ =404;
-    }
+	location / {
+		try_files $uri $uri/ =404;
+	}
 }
 
 server {
-    root /var/www/html;
+	root /var/www/html;
 
-    index index.html index.htm index.nginx-debian.html;
+	index index.html index.htm index.nginx-debian.html;
     server_name {{.Domain}};
 
-    location / {
-        proxy_pass http://localhost:8000;
-    }
+
+	location / {
+		proxy_pass http://localhost:{{.Port}};
+	}
 
     listen [::]:443 ssl ipv6only=on;
     listen 443 ssl;
@@ -108,41 +113,11 @@ server {
         return 301 https://$host$request_uri;
     }
 
-    listen 80 ;
-    listen [::]:80 ;
+
+	listen 80 ;
+	listen [::]:80 ;
     server_name {{.Domain}};
     return 404;
-}
-
-server {
-    root /var/www/html;
-
-    index index.html index.htm index.nginx-debian.html;
-    server_name {{.Domain}};
-
-    location / {
-        proxy_pass http://localhost:8001;
-    }
-
-    listen [::]:8444 ssl ipv6only=on;
-    listen 8444 ssl;
-    ssl_certificate {{.SslCertPath}};
-    ssl_certificate_key {{.SslCertKeyPath}};
-}
-server {
-    root /var/www/html;
-
-    index index.html index.htm index.nginx-debian.html;
-    server_name {{.Domain}};
-
-    location / {
-        proxy_pass http://localhost:8002;
-    }
-
-    listen [::]:8445 ssl ipv6only=on;
-    listen 8445 ssl;
-    ssl_certificate {{.SslCertPath}};
-    ssl_certificate_key {{.SslCertKeyPath}};
 }
 	`))
 
