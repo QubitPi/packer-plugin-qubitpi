@@ -83,4 +83,5 @@ release:
   #- glob: ./docs.zip
 
 changelog:
-  skip: true
+  sort: asc
+  use: github
