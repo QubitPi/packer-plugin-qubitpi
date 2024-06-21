@@ -46,7 +46,9 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, generatedData map[string]interface{}) error {
 	p.config.HomeDir = sslProvisioner.GetHomeDir(p.config.HomeDir)
 
-	composeFile := strings.Replace(getDockerComposeFileTemplate(), "mail.domain.com", "mail."+p.config.BaseDomain, -1)
+	mailServerDomain := "mail." + p.config.BaseDomain
+
+	composeFile := strings.Replace(getDockerComposeFileTemplate(), "mail.domain.com", mailServerDomain, -1)
 	composeFileDst := fmt.Sprintf(filepath.Join(p.config.HomeDir, "compose.yaml"))
 	composeFileSource, err := sslProvisioner.WriteToFile(composeFile)
 	err = sslProvisioner.UploadFile(p.config.ctx, ui, communicator, composeFileSource, composeFileDst)
@@ -56,7 +58,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 
 	sslCertDestination := fmt.Sprintf(filepath.Join(p.config.HomeDir, "fullchain.pem"))
 	sslCertKeyDestination := fmt.Sprintf(filepath.Join(p.config.HomeDir, "privkey.pem"))
-	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, "", getCommands(p.config.HomeDir, p.config.BaseDomain, sslCertDestination, sslCertKeyDestination))
+	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, "", getCommands(p.config.HomeDir, mailServerDomain, sslCertDestination, sslCertKeyDestination))
 }
 
 func getDockerComposeFileTemplate() string {
