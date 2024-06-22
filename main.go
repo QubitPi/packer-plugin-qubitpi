@@ -19,7 +19,7 @@ func main() {
 	pps := plugin.NewSet()
 	pps.RegisterProvisioner("docker-mailserver-provisioner", new(dockerMailServerProv.Provisioner))
 	pps.RegisterProvisioner("kong-api-gateway-provisioner", new(kongApiGatewayProv.Provisioner))
-	pps.RegisterProvisioner("sonatype-nexus-repository", new(sonatypeNexusRepository.Provisioner))
+	pps.RegisterProvisioner("sonatype-nexus-repository-provisioner", new(sonatypeNexusRepository.Provisioner))
 	pps.SetVersion(pluginVersion.PluginVersion)
 	err := pps.Run()
 	if err != nil {
