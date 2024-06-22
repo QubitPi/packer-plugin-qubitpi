@@ -18,7 +18,7 @@ import (
 )
 
 // PORT Default port of Sonatype Nexus
-const PORT int = 8081
+const PORT string = "8081"
 
 type Config struct {
 	SslCertBase64                 string `mapstructure:"sslCertBase64" required:"true"`
@@ -58,6 +58,7 @@ func getCommands(homeDir string) []string {
 
 		"curl -fsSL https://get.docker.com -o get-docker.sh",
 		"sh get-docker.sh",
+		"sudo usermod -aG docker ${USER}",
 
 		"docker volume create --name nexus-data",
 
@@ -74,7 +75,7 @@ func getNginxConfig(domain string) string {
 		SslCertPath    string
 		SslCertKeyPath string
 		Port           string
-	}{domain, sslProvisioner.SSL_CERT_PATH, sslProvisioner.SSL_CERT_KEY_PATH, string(rune(PORT))}
+	}{domain, sslProvisioner.SSL_CERT_PATH, sslProvisioner.SSL_CERT_KEY_PATH, PORT}
 	var buf bytes.Buffer
 	t := template.Must(template.New("Nginx Config").Parse(`
 server {
