@@ -39,9 +39,6 @@ jobs:
   tests:
     name: Go Tests
     needs: [test-example, get-go-version, gorelease-config-check]
-    outputs:
-      outcome: ${{ job.status }}
-    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -52,8 +49,34 @@ jobs:
           make build
           make test
 
+  acceptance-tests:
+    name: Packer Plugin Acceptance Tests
+    needs: tests
+    outputs:
+      outcome: ${{ job.status }}
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
+        with:
+          go-version: ${{ needs.get-go-version.outputs.go-version }}
+      - name: Install Packer
+        uses: hashicorp/setup-packer@main
+      - name: Build plugin
+        run: go build -ldflags="-X github.com/QubitPi/packer-plugin-hashicorp-aws/version.VersionPrerelease=dev" -o packer-plugin-hashicorp-aws
+      - name: Install dependencies
+        run: packer plugins install github.com/hashicorp/amazon
+      - name: Install plugin
+        run: packer plugins install --path packer-plugin-hashicorp-aws github.com/QubitPi/hashicorp-aws
+      - name: Run all acceptance tests
+        run: PACKER_ACC=1 go test -count 1 -v ./... -timeout=120m
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
   release:
-    needs: [tests]
+    needs: [acceptance-tests]
     if: ${{ github.ref == 'refs/heads/master' && github.repository != 'QubitPi/hashicorp-packer-plugin-scaffolding' }}
     uses: ./.github/workflows/release.yml
     secrets: inherit
@@ -61,9 +84,9 @@ jobs:
   slack-notification:
     name: Send Slack Notification
     if: github.ref != 'refs/heads/master'
-    needs: tests
+    needs: acceptance-tests
     uses: QubitPi/hashicorp-aws/.github/workflows/slack-notification.yml@master
     with:
-      job-status: ${{ needs.tests.outputs.outcome }}
+      job-status: ${{ needs.acceptance-tests.outputs.outcome }}
     secrets:
       slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}

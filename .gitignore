@@ -8,3 +8,5 @@ dist/*
 .docs/*
 docs.zip
 .idea/
+
+**/*_test.pkr.hcl
