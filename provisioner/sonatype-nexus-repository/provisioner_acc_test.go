@@ -1,7 +1,7 @@
 // Copyright (c) HashiCorp, Inc.
 // SPDX-License-Identifier: MPL-2.0
 
-package kongApiGateway
+package sonatypeNexusRepository
 
 import (
 	_ "embed"
@@ -18,9 +18,9 @@ import (
 //go:embed test-fixtures/template.pkr.hcl
 var testProvisionerHCL2Basic string
 
-func TestAccKongApiGatewayProvisioner(t *testing.T) {
+func TestAccSonatypeNexusRepositoryProvisioner(t *testing.T) {
 	testCase := &acctest.PluginTestCase{
-		Name: "kong_provisioner_basic_test",
+		Name: "sonatype_nexus_repository_provisioner_basic_test",
 		Setup: func() error {
 			return nil
 		},
@@ -28,7 +28,7 @@ func TestAccKongApiGatewayProvisioner(t *testing.T) {
 			return nil
 		},
 		Template: testProvisionerHCL2Basic,
-		Type:     "kong-api-gateway-provisioner",
+		Type:     "hashicorp-aws-sonatype-nexus-repository-provisioner",
 		Check: func(buildCommand *exec.Cmd, logfile string) error {
 			if buildCommand.ProcessState != nil {
 				if buildCommand.ProcessState.ExitCode() != 0 {
@@ -48,9 +48,11 @@ func TestAccKongApiGatewayProvisioner(t *testing.T) {
 			}
 			logsString := string(logsBytes)
 
-			provisionerOutputLog := "null.basic-example: provisioner mock: my-mock-config"
+			t.Log(logsBytes)
+
+			provisionerOutputLog := "amazon-ebs.hashicorp-aws: AMIs were created:"
 			if matched, _ := regexp.MatchString(provisionerOutputLog+".*", logsString); !matched {
-				t.Fatalf("logs doesn't contain expected foo value %q", logsString)
+				t.Fatalf("logs doesn't contain expected output %q", logsString)
 			}
 			return nil
 		},

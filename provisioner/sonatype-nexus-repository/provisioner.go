@@ -59,6 +59,7 @@ func getCommands(homeDir string) []string {
 		"curl -fsSL https://get.docker.com -o get-docker.sh",
 		"sh get-docker.sh",
 		"sudo usermod -aG docker ${USER}",
+		"sudo chmod o+rw /var/run/docker.sock",
 
 		"docker volume create --name nexus-data",
 

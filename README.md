@@ -87,10 +87,22 @@ export PATH=$PATH:$GOPATH/bin
 2. Build the plugin from the root directory:
 
    ```shell 
-   make build
+   go build -ldflags="-X github.com/QubitPi/packer-plugin-hashicorp-aws/version.VersionPrerelease=dev" -o packer-plugin-hashicorp-aws
    ```
-   
-   After we successfully compile, the `packer-plugin-hashicorp-aws` plugin binary file is in the root directory.
+
+3. After We successfully compile, the `packer-plugin-hashicorp-aws` plugin binary file is in the root directory.
+
+4. To install the compiled plugin, run the following command
+
+   ```shell
+   packer plugins install --path packer-plugin-hashicorp-aws github.com/QubitPi/hashicorp-aws
+   ```
+
+> [!TIP]
+>
+> If executing the `packer plugins install` reports an error, please make sure the version of `packer` command is the
+> latest. To upgrade to the latest version, please refer to
+> [Packer's documentation](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli)
 
 ### Running Acceptance Tests
 
@@ -99,7 +111,7 @@ Make sure to install the plugin locally using the steps in [Build from source](#
 Once everything needed is set up, run:
 
 ```shell
-make test
+PACKER_ACC=1 go test -count 1 -v ./... -timeout=120m
 ```
 
 This will run the acceptance tests for all plugins in this set.
