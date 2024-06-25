@@ -9,7 +9,7 @@
 
 ### Installation
 
-To install this plugin, copy and paste this code into your Packer configuration, then run [`packer init`](https://www.packer.io/docs/commands/init).
+To install this plugin, copy and paste this code into Packer configuration, then run [`packer init`](https://www.packer.io/docs/commands/init).
 
 ```hcl
 packer {
@@ -22,7 +22,7 @@ packer {
 }
 ```
 
-Alternatively, you can use `packer plugins install` to manage installation of this plugin.
+Alternatively, we can use `packer plugins install` to manage installation of this plugin.
 
 ```sh
 $ packer plugins install github.com/QubitPi/hashicorp-aws
@@ -32,5 +32,4 @@ $ packer plugins install github.com/QubitPi/hashicorp-aws
 
 #### Provisioners
 
-- [Kong API Gateway](./provisioners/kong-api-gateway.mdx)
-- [Docker Mailserver](./provisioners/docker-mailserver.mdx)
+- [Sonatype Nexus Repository](./provisioners/sonatype-nexus-repository.mdx)
