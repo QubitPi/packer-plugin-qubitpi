@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	basicProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/basic-provisioner"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/hashicorp/packer-plugin-sdk/tmp"
@@ -135,17 +136,7 @@ func Provision(ctx context.Context, interCtx interpolate.Context, ui packersdk.U
 		}
 	}
 
-	if len(amiConfigCommands) > 0 {
-		for _, command := range amiConfigCommands {
-			err := (&packersdk.RemoteCmd{Command: command}).RunWithUi(ctx, communicator, ui)
-			if err != nil {
-				os.Exit(1) // async termination
-				// return err
-			}
-		}
-	}
-
-	return nil
+	return basicProvisioner.Provision(ctx, ui, communicator, amiConfigCommands)
 }
 
 // Decodes a base64-encoded string and returns the string representation of it
