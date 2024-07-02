@@ -116,6 +116,16 @@ PACKER_ACC=1 go test -count 1 -v ./... -timeout=120m
 
 This will run the acceptance tests for all plugins in this set.
 
+> [!CAUTION]
+> 
+> Please make sure the acceptance tests are running against the local version by deleting all previously installed
+> versions under `$HOME/. config/packer/plugins` directory. Otherwise, the tests will pick up the old released version
+> if they were installed before. Deleting `github.com/QubitPi/hashicorp-aws`, for example, would be
+> 
+> ```console
+> rm -rf ~/.config/packer/plugins/github.com/QubitPi/hashicorp-aws
+> ```
+
 ## Registering Plugin as Packer Integration
 
 Partner and community plugins can be hard to find if a user doesn't know what
