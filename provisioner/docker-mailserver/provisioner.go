@@ -8,6 +8,7 @@ package dockerMailserver
 import (
 	"context"
 	"fmt"
+	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
 	sslProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -51,7 +52,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	composeFile := strings.Replace(getDockerComposeFileTemplate(), "mail.domain.com", mailServerDomain, -1)
 	composeFileDst := fmt.Sprintf(filepath.Join(p.config.HomeDir, "compose.yaml"))
 	composeFileSource, err := sslProvisioner.WriteToFile(composeFile)
-	err = sslProvisioner.UploadFile(p.config.ctx, ui, communicator, composeFileSource, composeFileDst)
+	err = fileProvisioner.Provision(p.config.ctx, ui, communicator, composeFileSource, composeFileDst)
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", composeFileSource, composeFileDst, err)
 	}
