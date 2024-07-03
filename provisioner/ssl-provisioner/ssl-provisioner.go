@@ -8,12 +8,11 @@ import (
 	"encoding/base64"
 	"fmt"
 	basicProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/basic-provisioner"
+	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/hashicorp/packer-plugin-sdk/tmp"
-	"os"
 	"path/filepath"
-	"strings"
 )
 
 const SSL_CERT_PATH string = "/etc/ssl/certs/server.crt"
@@ -55,66 +54,11 @@ func WriteToFile(content string) (string, error) {
 	return file.Name(), nil
 }
 
-func UploadFile(ctx interpolate.Context, ui packersdk.Ui, communicator packersdk.Communicator, source string, destination string) error {
-	src, err := interpolate.Render(source, &ctx)
-	if err != nil {
-		return fmt.Errorf("error interpolating source: %s", err)
-	}
-
-	dst, err := interpolate.Render(destination, &ctx)
-	if err != nil {
-		return fmt.Errorf("error interpolating destination: %s", err)
-	}
-
-	ui.Say(fmt.Sprintf("Uploading %s => %s", src, dst))
-
-	info, err := os.Stat(src)
-	if err != nil {
-		return err
-	}
-
-	if info.IsDir() {
-		return fmt.Errorf("source should be a file; '%s', however, is a directory", src)
-	}
-
-	f, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	fi, err := f.Stat()
-	if err != nil {
-		return err
-	}
-
-	filedst := dst
-	if strings.HasSuffix(dst, "/") {
-		filedst = dst + filepath.Base(src)
-	}
-
-	pf := ui.TrackProgress(filepath.Base(src), 0, info.Size(), f)
-	defer pf.Close()
-
-	// Upload the file
-	if err = communicator.Upload(filedst, pf, &fi); err != nil {
-		if strings.Contains(err.Error(), "Error restoring file") {
-			ui.Error(fmt.Sprintf("Upload failed: %s; this can occur when "+
-				"your file destination is a folder without a trailing "+
-				"slash.", err))
-		}
-		ui.Error(fmt.Sprintf("Upload failed: %s", err))
-		return err
-	}
-
-	return nil
-}
-
 func Provision(ctx context.Context, interCtx interpolate.Context, ui packersdk.Ui, communicator packersdk.Communicator, homeDir string, sslCertBase64 string, sslCertKeyBase64 string, nginxConfig string, amiConfigCommands []string) error {
 	sslCert, err := decodeBase64(sslCertBase64)
 	sslCertSource, err := WriteToFile(sslCert)
 	sslCertDestination := fmt.Sprintf(filepath.Join(homeDir, "ssl.crt"))
-	err = UploadFile(interCtx, ui, communicator, sslCertSource, sslCertDestination)
+	err = fileProvisioner.Provision(interCtx, ui, communicator, sslCertSource, sslCertDestination)
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertSource, sslCertDestination, err)
 	}
@@ -122,7 +66,7 @@ func Provision(ctx context.Context, interCtx interpolate.Context, ui packersdk.U
 	sslCertKey, err := decodeBase64(sslCertKeyBase64)
 	sslCertKeySource, err := WriteToFile(sslCertKey)
 	sslCertKeyDestination := fmt.Sprintf(filepath.Join(homeDir, "ssl.key"))
-	err = UploadFile(interCtx, ui, communicator, sslCertKeySource, sslCertKeyDestination)
+	err = fileProvisioner.Provision(interCtx, ui, communicator, sslCertSource, sslCertDestination)
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertKeySource, sslCertKeyDestination, err)
 	}
@@ -130,7 +74,7 @@ func Provision(ctx context.Context, interCtx interpolate.Context, ui packersdk.U
 	if nginxConfig != "" {
 		nginxSource, err := WriteToFile(nginxConfig)
 		nginxDst := fmt.Sprintf(filepath.Join(homeDir, "nginx-ssl.conf"))
-		err = UploadFile(interCtx, ui, communicator, nginxSource, nginxDst)
+		err = fileProvisioner.Provision(interCtx, ui, communicator, sslCertSource, sslCertDestination)
 		if err != nil {
 			return fmt.Errorf("error uploading '%s' to '%s': %s", nginxSource, nginxDst, err)
 		}
