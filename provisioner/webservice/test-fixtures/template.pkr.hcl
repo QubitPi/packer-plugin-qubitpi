@@ -11,7 +11,7 @@ packer {
 }
 
 source "amazon-ebs" "hashicorp-aws" {
-  ami_name              = "packer-plugin-hashicorp-aws-acc-test-ami-sonatype-nexus-repository"
+  ami_name              = "packer-plugin-hashicorp-aws-acc-test-ami-webservice"
   force_deregister      = "true"
   force_delete_snapshot = "true"
 
@@ -40,10 +40,8 @@ build {
     "source.amazon-ebs.hashicorp-aws"
   ]
 
-  provisioner "hashicorp-aws-sonatype-nexus-repository-provisioner" {
-    homeDir                       = "/home/ubuntu"
-    sslCertBase64                 = "YXNkZnNnaHRkeWhyZXJ3ZGZydGV3ZHNmZ3RoeTY0cmV3ZGZyZWd0cmV3d2ZyZw=="
-    sslCertKeyBase64              = "MzI0NXRnZjk4dmJoIGNsO2VbNDM1MHRdzszNDM1b2l0cmo="
-    sonatypeNexusRepositoryDomain = "nexus.mycompany.com"
+  provisioner "hashicorp-aws-webservice-provisioner" {
+    homeDir   = "/home/ubuntu"
+    warSource = "my-webservice.war"
   }
 }

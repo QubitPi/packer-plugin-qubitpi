@@ -66,7 +66,7 @@ func Provision(ctx context.Context, interCtx interpolate.Context, ui packersdk.U
 	sslCertKey, err := decodeBase64(sslCertKeyBase64)
 	sslCertKeySource, err := WriteToFile(sslCertKey)
 	sslCertKeyDestination := fmt.Sprintf(filepath.Join(homeDir, "ssl.key"))
-	err = fileProvisioner.Provision(interCtx, ui, communicator, sslCertSource, sslCertDestination)
+	err = fileProvisioner.Provision(interCtx, ui, communicator, sslCertKeySource, sslCertKeyDestination)
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertKeySource, sslCertKeyDestination, err)
 	}
@@ -74,7 +74,7 @@ func Provision(ctx context.Context, interCtx interpolate.Context, ui packersdk.U
 	if nginxConfig != "" {
 		nginxSource, err := WriteToFile(nginxConfig)
 		nginxDst := fmt.Sprintf(filepath.Join(homeDir, "nginx-ssl.conf"))
-		err = fileProvisioner.Provision(interCtx, ui, communicator, sslCertSource, sslCertDestination)
+		err = fileProvisioner.Provision(interCtx, ui, communicator, nginxSource, nginxDst)
 		if err != nil {
 			return fmt.Errorf("error uploading '%s' to '%s': %s", nginxSource, nginxDst, err)
 		}
