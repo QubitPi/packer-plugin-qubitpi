@@ -6,12 +6,12 @@ package main
 import (
 	"fmt"
 	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/react"
-	sonatypeNexusRepository "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/sonatype-nexus-repository"
+	artifactory "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/sonatype-nexus-repository"
 	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/webservice"
 	"os"
 
-	dockerMailServerProv "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/docker-mailserver"
-	kongApiGatewayProv "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/kong-api-gateway"
+	mailserver "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/docker-mailserver"
+	gateway "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/kong-api-gateway"
 	pluginVersion "github.com/QubitPi/packer-plugin-hashicorp-aws/version"
 
 	"github.com/hashicorp/packer-plugin-sdk/plugin"
@@ -19,9 +19,9 @@ import (
 
 func main() {
 	pps := plugin.NewSet()
-	pps.RegisterProvisioner("docker-mailserver-provisioner", new(dockerMailServerProv.Provisioner))
-	pps.RegisterProvisioner("kong-api-gateway-provisioner", new(kongApiGatewayProv.Provisioner))
-	pps.RegisterProvisioner("sonatype-nexus-repository-provisioner", new(sonatypeNexusRepository.Provisioner))
+	pps.RegisterProvisioner("docker-mailserver-provisioner", new(mailserver.Provisioner))
+	pps.RegisterProvisioner("kong-api-gateway-provisioner", new(gateway.Provisioner))
+	pps.RegisterProvisioner("sonatype-nexus-repository-provisioner", new(artifactory.Provisioner))
 	pps.RegisterProvisioner("webservice-provisioner", new(webservice.Provisioner))
 	pps.RegisterProvisioner("react-provisioner", new(react.Provisioner))
 	pps.SetVersion(pluginVersion.PluginVersion)

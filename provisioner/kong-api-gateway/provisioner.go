@@ -3,7 +3,7 @@
 
 //go:generate packer-sdc mapstructure-to-hcl2 -type Config
 
-package kongApiGateway
+package gateway
 
 import (
 	"bytes"
