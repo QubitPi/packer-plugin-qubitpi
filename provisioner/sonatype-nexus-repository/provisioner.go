@@ -8,7 +8,8 @@ package artifactory
 import (
 	"bytes"
 	"context"
-	sslProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
@@ -46,22 +47,25 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 }
 
 func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, generatedData map[string]interface{}) error {
-	p.config.HomeDir = sslProvisioner.GetHomeDir(p.config.HomeDir)
-	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, getNginxConfig(p.config.SonatypeNexusRepositoryDomain), getCommands())
+	p.config.HomeDir = ssl.GetHomeDir(p.config.HomeDir)
+	err := shell.Provision(ctx, ui, communicator, getCommands())
+	if err != nil {
+		return err
+	}
+	return ssl.Provision(
+		ctx,
+		p.config.ctx,
+		ui,
+		communicator,
+		p.config.HomeDir,
+		p.config.SslCertBase64,
+		p.config.SslCertKeyBase64,
+		getNginxConfig(p.config.SonatypeNexusRepositoryDomain),
+	)
 }
 
 func getCommands() []string {
-	return []string{
-		"sudo apt update && sudo apt upgrade -y",
-		"sudo apt install software-properties-common -y",
-
-		"curl -fsSL https://get.docker.com -o get-docker.sh",
-		"sh get-docker.sh",
-		"sudo usermod -aG docker ${USER}",
-		"sudo chmod o+rw /var/run/docker.sock",
-
-		"docker volume create --name nexus-data",
-	}
+	return append(shell.CommandsInstallingSudoLessDocker(), []string{"docker volume create --name nexus-data"}...)
 }
 
 func getNginxConfig(domain string) string {
@@ -70,7 +74,7 @@ func getNginxConfig(domain string) string {
 		SslCertDst    string
 		SslCertKeyDst string
 		Port          string
-	}{domain, sslProvisioner.SslCertDst, sslProvisioner.SslCertKeyDst, PORT}
+	}{domain, ssl.SslCertDst, ssl.SslCertKeyDst, PORT}
 	var buf bytes.Buffer
 	t := template.Must(template.New("Nginx Config").Parse(`
 server {

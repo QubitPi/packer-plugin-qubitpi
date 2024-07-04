@@ -10,7 +10,8 @@ import (
 	"context"
 	"fmt"
 	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
-	sslProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
@@ -50,7 +51,7 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 }
 
 func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, generatedData map[string]interface{}) error {
-	p.config.HomeDir = sslProvisioner.GetHomeDir(p.config.HomeDir)
+	p.config.HomeDir = ssl.GetHomeDir(p.config.HomeDir)
 
 	distFileDst := fmt.Sprintf(filepath.Join(p.config.HomeDir, "dist"))
 	err := fileProvisioner.Provision(p.config.ctx, ui, communicator, p.config.DistSource, distFileDst)
@@ -58,7 +59,12 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 		return err
 	}
 
-	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, getNginxConfig(p.config.AppDomain), getCommands())
+	err = shell.Provision(ctx, ui, communicator, getCommands())
+	if err != nil {
+		return err
+	}
+
+	return ssl.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, getNginxConfig(p.config.AppDomain))
 }
 
 func getNginxConfig(domain string) string {
@@ -67,7 +73,7 @@ func getNginxConfig(domain string) string {
 		SslCertDst    string
 		SslCertKeyDst string
 		Port          string
-	}{domain, sslProvisioner.SslCertDst, sslProvisioner.SslCertKeyDst, PORT}
+	}{domain, ssl.SslCertDst, ssl.SslCertKeyDst, PORT}
 	var buf bytes.Buffer
 	t := template.Must(template.New("Nginx Config").Parse(`
 server {

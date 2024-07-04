@@ -1,7 +1,7 @@
 // Copyright (c) Jiaqi Liu
 // SPDX-License-Identifier: MPL-2.0
 
-package sslProvisioner
+package ssl
 
 import "testing"
 

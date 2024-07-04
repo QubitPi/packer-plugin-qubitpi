@@ -3,6 +3,9 @@
 
 // Package shell This package implements an internal provisioner for Packer that executes a specified list of shell
 // commands within the remote machine
+//
+// In addition, it offers common functions that returns command instructions for common infrastructure setup, such as
+// installing docker
 package shell
 
 import (
@@ -15,6 +18,55 @@ import (
 	"math/rand"
 	"os"
 )
+
+// Provision Batch executes a list of ordered bash shell commands.
+//
+// It doesn't reuse Packer's original shell provisioner
+// (https://github.com/hashicorp/packer/blob/main/provisioner/shell/provisioner.go), which is not fully exported for
+// public use due to the unexported config parameter -
+// https://github.com/hashicorp/packer/blob/1e446de977e93b7119ebbaa6f55268bd29240e4f/provisioner/shell/provisioner.go#L73
+// This parameter is unexported because is not capitalized
+//
+// This provisioner works by loading all provided commands into a shell script. We do this because executing commands
+// separately in the following way simply doesn't work:
+//
+//	if len(amiConfigCommands) > 0 {
+//		   for _, command := range amiConfigCommands {
+//		   	   err := (&packersdk.RemoteCmd{Command: command}).RunWithUi(ctx, communicator, ui)
+//		   	   if err != nil {
+//		   	   	   return fmt.Errorf("CMD error: %s", err)
+//		   	   }
+//		   }
+//	}
+//
+// each command is executed in a separate shell, meaning their state is not preserved unless the state is flushed to the
+// hard disk of the remote machine. For example, the regular env variable export like "export JAVA_HOME=..." won't carry
+// over to the next command's execution context. The only way to preserve all in-memory states is to run everything in a
+// one-time script, which is how this function is implemented
+func Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, commands []string) error {
+	scriptFile, err := loadCommandsIntoScript(commands)
+	if err != nil {
+		return err
+	}
+	defer os.Remove(scriptFile.Name())
+
+	ui.Say(fmt.Sprintf("Provisioning with %s", commands))
+
+	return executeScript(ctx, ui, communicator, scriptFile)
+}
+
+// CommandsInstallingSudoLessDocker returns an ordered list of commands that installs sudo-free Docker in remote machine
+func CommandsInstallingSudoLessDocker() []string {
+	return []string{
+		"sudo apt update && sudo apt upgrade -y",
+		"sudo apt install software-properties-common -y",
+
+		"curl -fsSL https://get.docker.com -o get-docker.sh",
+		"sh get-docker.sh",
+		"sudo usermod -aG docker ${USER}",
+		"sudo chmod o+rw /var/run/docker.sock",
+	}
+}
 
 func loadCommandsIntoScript(commands []string) (*os.File, error) {
 	scriptFile, err := tmp.File("packer-shell")
@@ -76,40 +128,4 @@ func executeScript(ctx context.Context, ui packersdk.Ui, communicator packersdk.
 	}
 
 	return nil
-}
-
-// Provision Batch executes a list of ordered bash shell commands.
-//
-// It doesn't reuse Packer's original shell provisioner
-// (https://github.com/hashicorp/packer/blob/main/provisioner/shell/provisioner.go), which is not fully exported for
-// public use due to the unexported config parameter -
-// https://github.com/hashicorp/packer/blob/1e446de977e93b7119ebbaa6f55268bd29240e4f/provisioner/shell/provisioner.go#L73
-// This parameter is unexported because is not capitalized
-//
-// This provisioner works by loading all provided commands into a shell script. We do this because executing commands
-// separately in the following way simply doesn't work:
-//
-//	if len(amiConfigCommands) > 0 {
-//		   for _, command := range amiConfigCommands {
-//		   	   err := (&packersdk.RemoteCmd{Command: command}).RunWithUi(ctx, communicator, ui)
-//		   	   if err != nil {
-//		   	   	   return fmt.Errorf("CMD error: %s", err)
-//		   	   }
-//		   }
-//	}
-//
-// each command is executed in a separate shell, meaning their state is not preserved unless the state is flushed to the
-// hard disk of the remote machine. For example, the regular env variable export like "export JAVA_HOME=..." won't carry
-// over to the next command's execution context. The only way to preserve all in-memory states is to run everything in a
-// one-time script, which is how this function is implemented
-func Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, commands []string) error {
-	scriptFile, err := loadCommandsIntoScript(commands)
-	if err != nil {
-		return err
-	}
-	defer os.Remove(scriptFile.Name())
-
-	ui.Say(fmt.Sprintf("Provisioning with %s", commands))
-
-	return executeScript(ctx, ui, communicator, scriptFile)
 }
