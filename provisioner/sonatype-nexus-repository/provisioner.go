@@ -8,7 +8,6 @@ package sonatypeNexusRepository
 import (
 	"bytes"
 	"context"
-	"fmt"
 	sslProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -48,10 +47,10 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 
 func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, generatedData map[string]interface{}) error {
 	p.config.HomeDir = sslProvisioner.GetHomeDir(p.config.HomeDir)
-	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, getNginxConfig(p.config.SonatypeNexusRepositoryDomain), getCommands(p.config.HomeDir))
+	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, getNginxConfig(p.config.SonatypeNexusRepositoryDomain), getCommands())
 }
 
-func getCommands(homeDir string) []string {
+func getCommands() []string {
 	return []string{
 		"sudo apt update && sudo apt upgrade -y",
 		"sudo apt install software-properties-common -y",
@@ -62,21 +61,16 @@ func getCommands(homeDir string) []string {
 		"sudo chmod o+rw /var/run/docker.sock",
 
 		"docker volume create --name nexus-data",
-
-		"sudo apt install -y nginx",
-		fmt.Sprintf("sudo mv %s/nginx-ssl.conf %s", homeDir, sslProvisioner.NGINX_CONFIG_PATH),
-		fmt.Sprintf("sudo mv %s/ssl.crt %s", homeDir, sslProvisioner.SSL_CERT_PATH),
-		fmt.Sprintf("sudo mv %s/ssl.key %s", homeDir, sslProvisioner.SSL_CERT_KEY_PATH),
 	}
 }
 
 func getNginxConfig(domain string) string {
 	var sslConfigs = struct {
-		Domain         string
-		SslCertPath    string
-		SslCertKeyPath string
-		Port           string
-	}{domain, sslProvisioner.SSL_CERT_PATH, sslProvisioner.SSL_CERT_KEY_PATH, PORT}
+		Domain        string
+		SslCertDst    string
+		SslCertKeyDst string
+		Port          string
+	}{domain, sslProvisioner.SslCertDst, sslProvisioner.SslCertKeyDst, PORT}
 	var buf bytes.Buffer
 	t := template.Must(template.New("Nginx Config").Parse(`
 server {
@@ -107,8 +101,8 @@ server {
 
     listen [::]:443 ssl ipv6only=on;
     listen 443 ssl;
-    ssl_certificate {{.SslCertPath}};
-    ssl_certificate_key {{.SslCertKeyPath}};
+    ssl_certificate {{.SslCertDst}};
+    ssl_certificate_key {{.SslCertKeyDst}};
 }
 server {
     if ($host = {{.Domain}}) {
