@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/react"
 	sonatypeNexusRepository "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/sonatype-nexus-repository"
 	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/webservice"
 	"os"
@@ -22,6 +23,7 @@ func main() {
 	pps.RegisterProvisioner("kong-api-gateway-provisioner", new(kongApiGatewayProv.Provisioner))
 	pps.RegisterProvisioner("sonatype-nexus-repository-provisioner", new(sonatypeNexusRepository.Provisioner))
 	pps.RegisterProvisioner("webservice-provisioner", new(webservice.Provisioner))
+	pps.RegisterProvisioner("react-provisioner", new(react.Provisioner))
 	pps.SetVersion(pluginVersion.PluginVersion)
 	err := pps.Run()
 	if err != nil {
