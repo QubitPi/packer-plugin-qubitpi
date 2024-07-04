@@ -1,0 +1,82 @@
+  Include a short description about the provisioner. This is a good place
+  to call out what the provisioner does, and any additional text that might
+  be helpful to a user. See https://www.packer.io/docs/provisioner/null
+-->
+
+The `webservice` provisioner is used to install Jersey-Jetty webservice WAR file in AWS AMI image
+
+
+<!-- Provisioner Configuration Fields -->
+
+**Required**
+
+- `warSource` (string) - The path to a local WAR file to upload to the machine. The path can be absolute or relative. If
+   it is relative, it is relative to the working directory when Packer is executed.
+
+
+<!--
+  Optional Configuration Fields
+
+  Configuration options that are not required or have reasonable defaults
+  should be listed under the optionals section. Defaults values should be
+  noted in the description of the field
+-->
+
+**Optional**
+
+- `homeDir` (string) - The `$Home` directory in AMI image; default to `/home/ubuntu`
+
+<!--
+  A basic example on the usage of the provisioner. Multiple examples
+  can be provided to highlight various configurations.
+
+-->
+
+### Example Usage
+
+```hcl
+packer {
+  required_plugins {
+    amazon = {
+      version = ">= 0.0.2"
+      source  = "github.com/hashicorp/amazon"
+    }
+  }
+}
+
+source "amazon-ebs" "hashicorp-aws" {
+  ami_name              = "packer-plugin-hashicorp-aws-acc-test-ami"
+  force_deregister      = "true"
+  force_delete_snapshot = "true"
+
+  instance_type = "t2.micro"
+  launch_block_device_mappings {
+    device_name           = "/dev/sda1"
+    volume_size           = 8
+    volume_type           = "gp2"
+    delete_on_termination = true
+  }
+  region = "us-west-1"
+  source_ami_filter {
+    filters = {
+      name                = "ubuntu/images/*ubuntu-*-22.04-amd64-server-*"
+      root-device-type    = "ebs"
+      virtualization-type = "hvm"
+    }
+    most_recent = true
+    owners      = ["099720109477"]
+  }
+  ssh_username = "ubuntu"
+}
+
+build {
+  sources = [
+    "source.amazon-ebs.hashicorp-aws"
+  ]
+
+  provisioner "hashicorp-aws-webservice-provisioner" {
+    homeDir   = "/home/ubuntu"
+    warSource = "my-webservice.war"
+  }
+}
+```

@@ -32,4 +32,7 @@ $ packer plugins install github.com/QubitPi/hashicorp-aws
 
 #### Provisioners
 
+- [React App](./provisioners/react.mdx)
 - [Sonatype Nexus Repository](./provisioners/sonatype-nexus-repository.mdx)
+- [Jersey-Jetty Webservice](./provisioners/webservice.mdx)
+- 
