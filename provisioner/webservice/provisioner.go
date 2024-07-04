@@ -8,8 +8,8 @@ package webservice
 import (
 	"context"
 	"fmt"
-	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
-	basicProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
 	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
@@ -47,12 +47,12 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 
 	warFileDst := fmt.Sprintf(filepath.Join(p.config.HomeDir, "ROOT.war"))
 
-	err := fileProvisioner.Provision(p.config.ctx, ui, communicator, p.config.WarSource, warFileDst)
+	err := file.Provision(p.config.ctx, ui, communicator, p.config.WarSource, warFileDst)
 	if err != nil {
 		return err
 	}
 
-	return basicProvisioner.Provision(ctx, ui, communicator, getCommands(p.config.HomeDir))
+	return shell.Provision(ctx, ui, communicator, getCommands(p.config.HomeDir))
 }
 
 func getCommands(homeDir string) []string {

@@ -9,7 +9,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
 	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
 	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
@@ -54,7 +54,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	p.config.HomeDir = ssl.GetHomeDir(p.config.HomeDir)
 
 	distFileDst := fmt.Sprintf(filepath.Join(p.config.HomeDir, "dist"))
-	err := fileProvisioner.Provision(p.config.ctx, ui, communicator, p.config.DistSource, distFileDst)
+	err := file.Provision(p.config.ctx, ui, communicator, p.config.DistSource, distFileDst)
 	if err != nil {
 		return err
 	}

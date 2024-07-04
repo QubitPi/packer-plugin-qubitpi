@@ -7,7 +7,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
 	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
@@ -37,7 +37,7 @@ func Provision(
 	sslCert, err := DecodeBase64(sslCertBase64)
 	sslCertSource, err := WriteToFile(sslCert)
 	sslCertDestination := fmt.Sprintf(filepath.Join(homeDir, sslCertFilename))
-	err = fileProvisioner.Provision(interCtx, ui, communicator, sslCertSource, sslCertDestination)
+	err = file.Provision(interCtx, ui, communicator, sslCertSource, sslCertDestination)
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertSource, sslCertDestination, err)
 	}
@@ -45,7 +45,7 @@ func Provision(
 	sslCertKey, err := DecodeBase64(sslCertKeyBase64)
 	sslCertKeySource, err := WriteToFile(sslCertKey)
 	sslCertKeyDestination := fmt.Sprintf(filepath.Join(homeDir, sslCertKeyFilename))
-	err = fileProvisioner.Provision(interCtx, ui, communicator, sslCertKeySource, sslCertKeyDestination)
+	err = file.Provision(interCtx, ui, communicator, sslCertKeySource, sslCertKeyDestination)
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertKeySource, sslCertKeyDestination, err)
 	}
@@ -53,7 +53,7 @@ func Provision(
 	if nginxConfig != "" {
 		nginxSource, err := WriteToFile(nginxConfig)
 		nginxDst := fmt.Sprintf(filepath.Join(homeDir, nginxConfigFilename))
-		err = fileProvisioner.Provision(interCtx, ui, communicator, nginxSource, nginxDst)
+		err = file.Provision(interCtx, ui, communicator, nginxSource, nginxDst)
 		if err != nil {
 			return fmt.Errorf("error uploading '%s' to '%s': %s", nginxSource, nginxDst, err)
 		}

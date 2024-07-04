@@ -8,7 +8,7 @@ package mailserver
 import (
 	"context"
 	"fmt"
-	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
 	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
 	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
@@ -53,7 +53,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	composeFile := strings.Replace(getDockerComposeFileTemplate(), "mail.domain.com", mailServerDomain, -1)
 	composeFileDst := fmt.Sprintf(filepath.Join(p.config.HomeDir, "compose.yaml"))
 	composeFileSource, err := ssl.WriteToFile(composeFile)
-	err = fileProvisioner.Provision(p.config.ctx, ui, communicator, composeFileSource, composeFileDst)
+	err = file.Provision(p.config.ctx, ui, communicator, composeFileSource, composeFileDst)
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", composeFileSource, composeFileDst, err)
 	}
@@ -61,7 +61,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	sslCert, err := ssl.DecodeBase64(p.config.SslCertBase64)
 	sslCertSource, err := ssl.WriteToFile(sslCert)
 	sslCertDestination := fmt.Sprintf(filepath.Join(p.config.HomeDir, "fullchain.pem"))
-	err = fileProvisioner.Provision(p.config.ctx, ui, communicator, sslCertSource, sslCertDestination)
+	err = file.Provision(p.config.ctx, ui, communicator, sslCertSource, sslCertDestination)
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertSource, sslCertDestination, err)
 	}
@@ -69,7 +69,7 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	sslCertKey, err := ssl.DecodeBase64(p.config.SslCertKeyBase64)
 	sslCertKeySource, err := ssl.WriteToFile(sslCertKey)
 	sslCertKeyDestination := fmt.Sprintf(filepath.Join(p.config.HomeDir, "privkey.pem"))
-	err = fileProvisioner.Provision(p.config.ctx, ui, communicator, sslCertKeySource, sslCertKeyDestination)
+	err = file.Provision(p.config.ctx, ui, communicator, sslCertKeySource, sslCertKeyDestination)
 	if err != nil {
 		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertKeySource, sslCertKeyDestination, err)
 	}

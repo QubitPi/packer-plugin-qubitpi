@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 // This package implements a provisioner for Packer that uploads a local file onto the remote machine
-package fileProvisioner
+package file
 
 import (
 	"fmt"
