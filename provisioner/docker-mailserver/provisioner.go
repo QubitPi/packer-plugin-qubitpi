@@ -8,6 +8,7 @@ package dockerMailserver
 import (
 	"context"
 	"fmt"
+	basicProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/basic-provisioner"
 	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
 	sslProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
@@ -57,9 +58,23 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 		return fmt.Errorf("error uploading '%s' to '%s': %s", composeFileSource, composeFileDst, err)
 	}
 
+	sslCert, err := sslProvisioner.DecodeBase64(p.config.SslCertBase64)
+	sslCertSource, err := sslProvisioner.WriteToFile(sslCert)
 	sslCertDestination := fmt.Sprintf(filepath.Join(p.config.HomeDir, "fullchain.pem"))
+	err = fileProvisioner.Provision(p.config.ctx, ui, communicator, sslCertSource, sslCertDestination)
+	if err != nil {
+		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertSource, sslCertDestination, err)
+	}
+
+	sslCertKey, err := sslProvisioner.DecodeBase64(p.config.SslCertKeyBase64)
+	sslCertKeySource, err := sslProvisioner.WriteToFile(sslCertKey)
 	sslCertKeyDestination := fmt.Sprintf(filepath.Join(p.config.HomeDir, "privkey.pem"))
-	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, "", getCommands(p.config.HomeDir, mailServerDomain, sslCertDestination, sslCertKeyDestination))
+	err = fileProvisioner.Provision(p.config.ctx, ui, communicator, sslCertKeySource, sslCertKeyDestination)
+	if err != nil {
+		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertKeySource, sslCertKeyDestination, err)
+	}
+
+	return basicProvisioner.Provision(ctx, ui, communicator, getCommands(p.config.HomeDir, mailServerDomain, sslCertDestination, sslCertKeyDestination))
 }
 
 func getDockerComposeFileTemplate() string {

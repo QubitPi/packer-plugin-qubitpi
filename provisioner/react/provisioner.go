@@ -58,16 +58,16 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 		return err
 	}
 
-	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, getNginxConfig(p.config.AppDomain), getCommands(p.config.HomeDir))
+	return sslProvisioner.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, getNginxConfig(p.config.AppDomain), getCommands())
 }
 
 func getNginxConfig(domain string) string {
 	var sslConfigs = struct {
-		Domain         string
-		SslCertPath    string
-		SslCertKeyPath string
-		Port           string
-	}{domain, sslProvisioner.SSL_CERT_PATH, sslProvisioner.SSL_CERT_KEY_PATH, PORT}
+		Domain        string
+		SslCertDst    string
+		SslCertKeyDst string
+		Port          string
+	}{domain, sslProvisioner.SslCertDst, sslProvisioner.SslCertKeyDst, PORT}
 	var buf bytes.Buffer
 	t := template.Must(template.New("Nginx Config").Parse(`
 server {
@@ -97,8 +97,8 @@ server {
 
     listen [::]:443 ssl ipv6only=on;
     listen 443 ssl;
-    ssl_certificate {{.SslCertPath}};
-    ssl_certificate_key {{.SslCertKeyPath}};
+    ssl_certificate {{.SslCertDst}};
+    ssl_certificate_key {{.SslCertKeyDst}};
 }
 server {
     if ($host = {{.Domain}}) {
@@ -119,11 +119,8 @@ server {
 	return buf.String()
 }
 
-func getCommands(homeDir string) []string {
-	return append(
-		getCommandsUpdatingUbuntu(),
-		append(getCommandsInstallingNode(), getSslCommands(homeDir)...)...,
-	)
+func getCommands() []string {
+	return append(getCommandsUpdatingUbuntu(), getCommandsInstallingNode()...)
 }
 
 func getCommandsUpdatingUbuntu() []string {
@@ -142,15 +139,5 @@ func getCommandsInstallingNode() []string {
 		"sudo npm install -g yarn",
 
 		"sudo npm install -g serve",
-	}
-}
-
-// Install and configure Jetty (for JDK 17) container
-func getSslCommands(homeDir string) []string {
-	return []string{
-		"sudo apt install -y nginx",
-		fmt.Sprintf("sudo mv %s/nginx-ssl.conf %s", homeDir, sslProvisioner.NGINX_CONFIG_PATH),
-		fmt.Sprintf("sudo mv %s/ssl.crt %s", homeDir, sslProvisioner.SSL_CERT_PATH),
-		fmt.Sprintf("sudo mv %s/ssl.key %s", homeDir, sslProvisioner.SSL_CERT_KEY_PATH),
 	}
 }
