@@ -1,14 +1,14 @@
 // Copyright (c) Jiaqi Liu
 // SPDX-License-Identifier: MPL-2.0
 
-package sslProvisioner
+package ssl
 
 import (
 	"context"
 	"encoding/base64"
 	"fmt"
 	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
-	basicProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
 	"github.com/hashicorp/packer-plugin-sdk/tmp"
@@ -33,7 +33,6 @@ func Provision(
 	sslCertBase64 string,
 	sslCertKeyBase64 string,
 	nginxConfig string,
-	amiConfigCommands []string,
 ) error {
 	sslCert, err := DecodeBase64(sslCertBase64)
 	sslCertSource, err := WriteToFile(sslCert)
@@ -60,7 +59,7 @@ func Provision(
 		}
 	}
 
-	return basicProvisioner.Provision(ctx, ui, communicator, append(amiConfigCommands, getSslSetupCommands(homeDir)...))
+	return shell.Provision(ctx, ui, communicator, getSslSetupCommands(homeDir))
 }
 
 // GetHomeDir Returns the home directory in Packer image builder. If a directory is specified, it is returned as it;
@@ -110,6 +109,8 @@ func DecodeBase64(encoded string) (string, error) {
 // machine
 func getSslSetupCommands(homeDir string) []string {
 	return []string{
+		"sudo apt update && sudo apt upgrade -y",
+
 		"sudo apt install -y nginx",
 		fmt.Sprintf("sudo mv %s/%s %s", homeDir, nginxConfigFilename, nginxConfigDst),
 		fmt.Sprintf("sudo mv %s/%s %s", homeDir, sslCertFilename, SslCertDst),

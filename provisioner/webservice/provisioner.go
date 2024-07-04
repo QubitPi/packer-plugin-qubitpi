@@ -10,7 +10,7 @@ import (
 	"fmt"
 	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
 	basicProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
-	sslProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
+	"github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
@@ -43,7 +43,7 @@ func (p *Provisioner) Prepare(raws ...interface{}) error {
 }
 
 func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, generatedData map[string]interface{}) error {
-	p.config.HomeDir = sslProvisioner.GetHomeDir(p.config.HomeDir)
+	p.config.HomeDir = ssl.GetHomeDir(p.config.HomeDir)
 
 	warFileDst := fmt.Sprintf(filepath.Join(p.config.HomeDir, "ROOT.war"))
 
