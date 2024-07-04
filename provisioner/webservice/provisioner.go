@@ -8,8 +8,8 @@ package webservice
 import (
 	"context"
 	"fmt"
-	basicProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/basic-provisioner"
 	fileProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/file-provisioner"
+	basicProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/shell"
 	sslProvisioner "github.com/QubitPi/packer-plugin-hashicorp-aws/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
