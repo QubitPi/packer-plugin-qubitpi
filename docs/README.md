@@ -32,7 +32,14 @@ $ packer plugins install github.com/QubitPi/hashicorp-aws
 
 #### Provisioners
 
+Provisioners are used to execute scripts on remote machine as part of AWS EC2 related resource creation and destruction.
+They enable
+
+1. programmatic configuration management which is not possible with HCL, and
+2. code reuse
+
+The business logics that satisfy the two criteria above are offered as the hashicorp-aws provisioners below:
+
 - [React App](./provisioners/react.mdx)
 - [Sonatype Nexus Repository](./provisioners/sonatype-nexus-repository.mdx)
 - [Jersey-Jetty Webservice](./provisioners/webservice.mdx)
-- 
