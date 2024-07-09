@@ -22,7 +22,7 @@ var testProvisionerHCL2AWS string
 var testProvisionerHCL2Docker string
 
 func TestAccSonatypeNexusRepositoryProvisioner(t *testing.T) {
-	testCase := &acctest.PluginTestCase{
+	testCaseAws := &acctest.PluginTestCase{
 		Name: "sonatype_nexus_repository_provisioner_aws_test",
 		Setup: func() error {
 			return nil
@@ -63,7 +63,7 @@ func TestAccSonatypeNexusRepositoryProvisioner(t *testing.T) {
 			return nil
 		},
 	}
-	acctest.TestPlugin(t, testCase)
+	acctest.TestPlugin(t, testCaseAws)
 
 	testCaseDocker := &acctest.PluginTestCase{
 		Name: "sonatype_nexus_repository_provisioner_docker_test",
