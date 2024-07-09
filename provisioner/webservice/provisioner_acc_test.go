@@ -28,7 +28,7 @@ func TestAccWebserviceProvisioner(t *testing.T) {
 		return
 	}
 
-	testCase := &acctest.PluginTestCase{
+	testCaseAws := &acctest.PluginTestCase{
 		Name: "webservice_provisioner_aws_test",
 		Setup: func() error {
 			return nil
@@ -70,7 +70,7 @@ func TestAccWebserviceProvisioner(t *testing.T) {
 			return nil
 		},
 	}
-	acctest.TestPlugin(t, testCase)
+	acctest.TestPlugin(t, testCaseAws)
 
 	testCaseDocker := &acctest.PluginTestCase{
 		Name: "webservice_provisioner_docker_test",
