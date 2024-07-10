@@ -163,5 +163,5 @@ The use and distribution terms for [packer-plugin-hashicorp-aws] are covered by 
 [HashiCorp Packer installing a plugin]: https://qubitpi.github.io/hashicorp-packer/packer/docs/plugins#installing-plugins
 [HashiCorp Packer SDK Badge]: https://img.shields.io/badge/Packer%20Plugin%20SDK>=%20v0.5.2-000000?style=for-the-badge&logo=hashicorp&logoColor=white
 [HashiCorp Packer SDK URL]: https://github.com/hashicorp/packer-plugin-sdk
-[HashiCorp Packer Badge]: https://img.shields.io/badge/Packer%20>=%20v1.10.2-02A8EF?style=for-the-badge&logo=Packer&logoColor=white
+[HashiCorp Packer Badge]: https://img.shields.io/badge/Packer%20>=%20v1.11.0-02A8EF?style=for-the-badge&logo=Packer&logoColor=white
 [HashiCorp Packer URL]: https://qubitpi.github.io/hashicorp-packer/packer/docs
