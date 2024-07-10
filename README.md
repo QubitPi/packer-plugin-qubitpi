@@ -157,11 +157,11 @@ The use and distribution terms for [packer-plugin-hashicorp-aws] are covered by 
 [GitHub Workflow Status URL]: https://github.com/QubitPi/packer-plugin-hashicorp-aws/actions/workflows/ci-cd.yml
 [Go Badge]: https://img.shields.io/badge/Go%20>=%201.20-00ADD8?style=for-the-badge&logo=go&logoColor=white
 
-[hashicorp-aws]: https://qubitpi.github.io/hashicorp-aws/
-[HashiCorp Packer]: https://qubitpi.github.io/hashicorp-packer/packer/docs
-[HashiCorp Packer init]: https://qubitpi.github.io/hashicorp-packer/packer/docs/commands/init
-[HashiCorp Packer installing a plugin]: https://qubitpi.github.io/hashicorp-packer/packer/docs/plugins#installing-plugins
+[hashicorp-aws]: https://hashicorp-aws.com/
+[HashiCorp Packer]: https://packer.qubitpi.org/packer/docs
+[HashiCorp Packer init]: https://packer.qubitpi.org/packer/docs/commands/init
+[HashiCorp Packer installing a plugin]: https://packer.qubitpi.org/packer/docs/plugins#installing-plugins
 [HashiCorp Packer SDK Badge]: https://img.shields.io/badge/Packer%20Plugin%20SDK>=%20v0.5.2-000000?style=for-the-badge&logo=hashicorp&logoColor=white
 [HashiCorp Packer SDK URL]: https://github.com/hashicorp/packer-plugin-sdk
 [HashiCorp Packer Badge]: https://img.shields.io/badge/Packer%20>=%20v1.11.0-02A8EF?style=for-the-badge&logo=Packer&logoColor=white
-[HashiCorp Packer URL]: https://qubitpi.github.io/hashicorp-packer/packer/docs
+[HashiCorp Packer URL]: https://packer.qubitpi.org/packer/docs

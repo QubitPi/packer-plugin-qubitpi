@@ -3,7 +3,7 @@
 #
 # This uses an action (hashicorp/ghaction-import-gpg) that assumes you set your
 # private key in the `GPG_PRIVATE_KEY` secret and passphrase in the `GPG_PASSPHRASE`
-# secret. See https://qubitpi.github.io/hashicorp-packer/packer/docs/plugins/creation#creating-a-github-release for more
+# secret. See https://packer.qubitpi.org/packer/docs/plugins/creation#creating-a-github-release for more
 # details on how to create `GPG_PRIVATE_KEY` and `GPG_PASSPHRASE`. If one would rather own their own GPG handling,
 # please fork this action or use an alternative one for key handling.
 #
