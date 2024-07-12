@@ -32,7 +32,11 @@ func Provision(ctx interpolate.Context, ui packersdk.Ui, communicator packersdk.
 	}
 
 	if info.IsDir() {
-		return fmt.Errorf("source should be a file; '%s', however, is a directory", src)
+		if err = communicator.UploadDir(dst, src, nil); err != nil {
+			ui.Error(fmt.Sprintf("Upload failed: %s", err))
+			return err
+		}
+		return nil
 	}
 
 	f, err := os.Open(src)
