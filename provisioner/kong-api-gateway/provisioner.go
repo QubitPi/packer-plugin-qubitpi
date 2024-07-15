@@ -87,6 +87,18 @@ server {
     server_name {{.Domain}};
 
     location / {
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin'  '*';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, HEAD';
+            add_header 'Access-Control-Allow-Headers' 'Authorization, Origin, X-Requested-With, Content-Type, Accept';
+
+            return 200;
+        }
+
+        if ($request_method ~* '(GET|POST)') {
+            add_header 'Access-Control-Allow-Origin' '*';
+        }
+
         proxy_pass http://localhost:8000;
     }
 
