@@ -20,14 +20,18 @@ import (
 	"text/template"
 )
 
-// PORT Default port of Sonatype Nexus
+// PORT Default port of React app
 const PORT string = "3000"
+
+// NODE_VERSION Default node version running the React app
+const NODE_VERSION = "18"
 
 type Config struct {
 	DistSource       string `mapstructure:"distSource" required:"true"`
 	SslCertBase64    string `mapstructure:"sslCertBase64" required:"true"`
 	SslCertKeyBase64 string `mapstructure:"sslCertKeyBase64" required:"true"`
 	AppDomain        string `mapstructure:"appDomain" required:"true"`
+	NodeVersion      string `mapstructure:"nodeVersion" required:"false"`
 	HomeDir          string `mapstructure:"homeDir" required:"false"`
 
 	ctx interpolate.Context
@@ -59,7 +63,10 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 		return err
 	}
 
-	err = shell.Provision(ctx, ui, communicator, getCommands())
+	if p.config.NodeVersion == "" {
+		p.config.NodeVersion = NODE_VERSION
+	}
+	err = shell.Provision(ctx, ui, communicator, getCommands(p.config.NodeVersion))
 	if err != nil {
 		return err
 	}
@@ -125,8 +132,8 @@ server {
 	return buf.String()
 }
 
-func getCommands() []string {
-	return append(getCommandsUpdatingUbuntu(), getCommandsInstallingNode()...)
+func getCommands(nodeVersion string) []string {
+	return append(getCommandsUpdatingUbuntu(), getCommandsInstallingNode(nodeVersion)...)
 }
 
 func getCommandsUpdatingUbuntu() []string {
@@ -136,14 +143,12 @@ func getCommandsUpdatingUbuntu() []string {
 	}
 }
 
-func getCommandsInstallingNode() []string {
+func getCommandsInstallingNode(nodeVersion string) []string {
 	return []string{
 		"sudo apt install -y curl",
-		"curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -",
+		fmt.Sprintf("curl -fsSL https://deb.nodesource.com/setup_%s.x | sudo -E bash -", nodeVersion),
 		"sudo apt install -y nodejs",
-
 		"sudo npm install -g yarn",
-
 		"sudo npm install -g serve",
 	}
 }
