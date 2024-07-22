@@ -14,6 +14,7 @@ type FlatConfig struct {
 	SslCertBase64    *string `mapstructure:"sslCertBase64" required:"true" cty:"sslCertBase64" hcl:"sslCertBase64"`
 	SslCertKeyBase64 *string `mapstructure:"sslCertKeyBase64" required:"true" cty:"sslCertKeyBase64" hcl:"sslCertKeyBase64"`
 	AppDomain        *string `mapstructure:"appDomain" required:"true" cty:"appDomain" hcl:"appDomain"`
+	NodeVersion      *string `mapstructure:"nodeVersion" required:"false" cty:"nodeVersion" hcl:"nodeVersion"`
 	HomeDir          *string `mapstructure:"homeDir" required:"false" cty:"homeDir" hcl:"homeDir"`
 }
 
@@ -33,6 +34,7 @@ func (*FlatConfig) HCL2Spec() map[string]hcldec.Spec {
 		"sslCertBase64":    &hcldec.AttrSpec{Name: "sslCertBase64", Type: cty.String, Required: false},
 		"sslCertKeyBase64": &hcldec.AttrSpec{Name: "sslCertKeyBase64", Type: cty.String, Required: false},
 		"appDomain":        &hcldec.AttrSpec{Name: "appDomain", Type: cty.String, Required: false},
+		"nodeVersion":      &hcldec.AttrSpec{Name: "nodeVersion", Type: cty.String, Required: false},
 		"homeDir":          &hcldec.AttrSpec{Name: "homeDir", Type: cty.String, Required: false},
 	}
 	return s
