@@ -59,10 +59,9 @@ func Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Comm
 func CommandsInstallingSudoLessDocker() []string {
 	return []string{
 		"sudo apt update && sudo apt upgrade -y",
-		"sudo apt install software-properties-common -y",
+		"sudo apt install git software-properties-common -y",
 
-		"curl -fsSL https://get.docker.com -o get-docker.sh",
-		"sh get-docker.sh",
+		"git clone https://github.com/QubitPi/docker-install.git && cd docker-install && sh install.sh",
 		"sudo usermod -aG docker ${USER}",
 		"sudo chmod o+rw /var/run/docker.sock",
 	}
