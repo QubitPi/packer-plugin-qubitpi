@@ -1,4 +1,4 @@
-module github.com/QubitPi/packer-plugin-hashicorp-aws
+module github.com/QubitPi/packer-plugin-hashistack
 
 go 1.20
 

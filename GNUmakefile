@@ -1,4 +1,4 @@
-NAME=hashicorp-aws
+NAME=hashistack
 BINARY=packer-plugin-${NAME}
 
 COUNT?=1

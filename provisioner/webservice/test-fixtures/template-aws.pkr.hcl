@@ -10,8 +10,8 @@ packer {
   }
 }
 
-source "amazon-ebs" "hashicorp-aws" {
-  ami_name              = "packer-plugin-hashicorp-aws-acc-test-ami-webservice"
+source "amazon-ebs" "hashistack" {
+  ami_name              = "packer-plugin-hashistack-acc-test-ami-webservice"
   force_deregister      = "true"
   force_delete_snapshot = "true"
 
@@ -37,10 +37,10 @@ source "amazon-ebs" "hashicorp-aws" {
 
 build {
   sources = [
-    "source.amazon-ebs.hashicorp-aws"
+    "source.amazon-ebs.hashistack"
   ]
 
-  provisioner "hashicorp-aws-webservice-provisioner" {
+  provisioner "hashistack-webservice-provisioner" {
     homeDir   = "/home/ubuntu"
     warSource = "my-webservice.war"
   }

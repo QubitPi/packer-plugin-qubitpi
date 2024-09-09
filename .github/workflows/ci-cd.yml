@@ -79,13 +79,13 @@ jobs:
         with:
           context: .github/docker/
           push: true
-          tags: jack20191124/packer-plugin-hashicorp-aws-acc-test-base:latest
+          tags: jack20191124/packer-plugin-hashistack-acc-test-base:latest
       - name: Push image Description
         uses: peter-evans/dockerhub-description@v4
         with:
           username: jack20191124
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: jack20191124/packer-plugin-hashicorp-aws-acc-test-base
+          repository: jack20191124/packer-plugin-hashistack-acc-test-base
           readme-filepath: .github/docker/README.md
 
   acceptance-tests:
@@ -103,13 +103,13 @@ jobs:
       - name: Install Packer
         uses: hashicorp/setup-packer@main
       - name: Build plugin
-        run: go build -ldflags="-X github.com/QubitPi/packer-plugin-hashicorp-aws/version.VersionPrerelease=dev" -o packer-plugin-hashicorp-aws
+        run: go build -ldflags="-X github.com/QubitPi/packer-plugin-hashistack/version.VersionPrerelease=dev" -o packer-plugin-hashistack
       - name: Install dependencies
         run: |
           packer plugins install github.com/hashicorp/amazon
           packer plugins install github.com/hashicorp/docker
       - name: Install plugin
-        run: packer plugins install --path packer-plugin-hashicorp-aws github.com/QubitPi/hashicorp-aws
+        run: packer plugins install --path packer-plugin-hashistack github.com/QubitPi/hashistack
       - name: Run all acceptance tests
         run: PACKER_ACC=1 go test -count 1 -v ./... -timeout=120m
         env:
@@ -126,7 +126,7 @@ jobs:
     name: Send Slack Notification
     if: github.ref != 'refs/heads/master'
     needs: acceptance-tests
-    uses: QubitPi/hashicorp-aws/.github/workflows/slack-notification.yml@master
+    uses: QubitPi/hashistack/.github/workflows/slack-notification.yml@master
     with:
       job-status: ${{ needs.acceptance-tests.outputs.outcome }}
     secrets:
