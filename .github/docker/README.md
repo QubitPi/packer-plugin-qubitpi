@@ -1,9 +1,9 @@
-Packer Plugin hashicorp-aws Acceptance Tests Base Image
+Packer Plugin hashistack Acceptance Tests Base Image
 =======================================================
 
-[![badge](https://img.shields.io/badge/DockerHub-2596EC?style=for-the-badge&logo=docker&logoColor=white)](https://hub.docker.com/r/jack20191124/packer-plugin-hashicorp-aws-acc-test-base)
+[![badge](https://img.shields.io/badge/DockerHub-2596EC?style=for-the-badge&logo=docker&logoColor=white)](https://hub.docker.com/r/jack20191124/packer-plugin-hashistack-acc-test-base)
 
-This image is used by [packer-plugin-hashicorp-aws](https://github.com/QubitPi/packer-plugin-hashicorp-aws) to perform
+This image is used by [packer-plugin-hashistack](https://github.com/QubitPi/packer-plugin-hashistack) to perform
 acceptance tests in Docker without the need to test against AWS, which
 [requires a real AWS credentials](https://developer.hashicorp.com/packer/tutorials/aws-get-started/aws-get-started-build-image#authenticate-to-aws)
 
@@ -19,17 +19,17 @@ packer {
   }
 }
 
-source "docker" "hashicorp-aws" {
-  image  = "jack20191124/packer-plugin-hashicorp-aws-acc-test-base:latest"
+source "docker" "hashistack" {
+  image  = "jack20191124/packer-plugin-hashistack-acc-test-base:latest"
   discard = true
 }
 
 build {
   sources = [
-    "source.docker.hashicorp-aws"
+    "source.docker.hashistack"
   ]
 
-  provisioner "hashicorp-aws-webservice-provisioner" {
+  provisioner "hashistack-webservice-provisioner" {
     homeDir   = "/"
     warSource = "my-webservice.war"
   }

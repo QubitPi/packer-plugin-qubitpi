@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   push-release-tag:
-    uses: QubitPi/hashicorp-aws/.github/workflows/version-bump.yml@master
+    uses: QubitPi/hashistack/.github/workflows/version-bump.yml@master
     with:
       user: QubitPi
       email: jack20220723@gmail.com
@@ -77,7 +77,7 @@ jobs:
   slack-notification:
     name: Send Slack Notification
     needs: goreleaser
-    uses: QubitPi/hashicorp-aws/.github/workflows/slack-notification.yml@master
+    uses: QubitPi/hashistack/.github/workflows/slack-notification.yml@master
     with:
       job-status: ${{ needs.goreleaser.outputs.outcome }}
     secrets:

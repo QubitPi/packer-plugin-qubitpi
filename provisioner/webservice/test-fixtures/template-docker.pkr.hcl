@@ -10,17 +10,17 @@ packer {
   }
 }
 
-source "docker" "hashicorp-aws" {
-  image  = "jack20191124/packer-plugin-hashicorp-aws-acc-test-base:latest"
+source "docker" "hashistack" {
+  image  = "jack20191124/packer-plugin-hashistack-acc-test-base:latest"
   discard = true
 }
 
 build {
   sources = [
-    "source.docker.hashicorp-aws"
+    "source.docker.hashistack"
   ]
 
-  provisioner "hashicorp-aws-webservice-provisioner" {
+  provisioner "hashistack-webservice-provisioner" {
     homeDir   = "/"
     warSource = "my-webservice.war"
   }

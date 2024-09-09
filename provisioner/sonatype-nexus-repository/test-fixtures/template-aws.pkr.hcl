@@ -10,8 +10,8 @@ packer {
   }
 }
 
-source "amazon-ebs" "hashicorp-aws" {
-  ami_name              = "packer-plugin-hashicorp-aws-acc-test-ami-sonatype-nexus-repository"
+source "amazon-ebs" "hashistack" {
+  ami_name              = "packer-plugin-hashistack-acc-test-ami-sonatype-nexus-repository"
   force_deregister      = "true"
   force_delete_snapshot = "true"
 
@@ -37,10 +37,10 @@ source "amazon-ebs" "hashicorp-aws" {
 
 build {
   sources = [
-    "source.amazon-ebs.hashicorp-aws"
+    "source.amazon-ebs.hashistack"
   ]
 
-  provisioner "hashicorp-aws-sonatype-nexus-repository-provisioner" {
+  provisioner "hashistack-sonatype-nexus-repository-provisioner" {
     homeDir                       = "/home/ubuntu"
     sslCertBase64                 = "YXNkZnNnaHRkeWhyZXJ3ZGZydGV3ZHNmZ3RoeTY0cmV3ZGZyZWd0cmV3d2ZyZw=="
     sslCertKeyBase64              = "MzI0NXRnZjk4dmJoIGNsO2VbNDM1MHRdzszNDM1b2l0cmo="
