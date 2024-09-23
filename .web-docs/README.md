@@ -15,7 +15,7 @@ To install this plugin, copy and paste this code into Packer configuration, then
 packer {
   required_plugins {
     hashistack = {
-      version = ">= 0.0.1"
+      version = ">= 0.0.42"
       source = "github.com/QubitPi/hashistack"
     }
   }
