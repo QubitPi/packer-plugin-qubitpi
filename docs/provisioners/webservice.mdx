@@ -6,8 +6,14 @@ Type: `webservice`
   be helpful to a user. See https://www.packer.io/docs/provisioners/null
 -->
 
-The `webservice` provisioner is used to install Jersey-Jetty webservice WAR file in AWS AMI image
+The `webservice` provisioner is used to install a __[JAX-RS](https://jcp.org/en/jsr/detail?id=370) Jersey-Jetty__
+webservice WAR file in AWS AMI image. Note that EBS volumes during build time will
+[automatically be removed](https://packer.qubitpi.org/packer/integrations/hashicorp/amazon/latest/components/builder/ebs)
 
+We take an opinionated webservice image, which goes without SSL, because
+[backend API should site behind a proxy or gateway](https://dev.to/behalf/authentication-authorization-in-microservices-architecture-part-i-2cn0#global-authentication-api-gateway-and-authorization-per-service).
+In addition, webservice executables are assumed to be in WAR format and is ready before preceding in order to simplify
+Packer build process.
 
 <!-- Provisioner Configuration Fields -->
 
@@ -15,7 +21,6 @@ The `webservice` provisioner is used to install Jersey-Jetty webservice WAR file
 
 - `warSource` (string) - The path to a local WAR file to upload to the machine. The path can be absolute or relative. If
    it is relative, it is relative to the working directory when Packer is executed.
-
 
 <!--
   Optional Configuration Fields
@@ -37,6 +42,12 @@ The `webservice` provisioner is used to install Jersey-Jetty webservice WAR file
 
 ### Example Usage
 
+In the following example, an AWS [AMI](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html) image called
+"my-webservice" is to be created and get registered into
+[us-west-1](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html#Concepts.RegionsAndAvailabilityZones.Availability)
+region. The size of the image would be [micro](https://aws.amazon.com/ec2/instance-types/) in this example and the base
+image is an Ubuntu 22.04:
+
 ```hcl
 packer {
   required_plugins {
@@ -44,11 +55,16 @@ packer {
       version = ">= 0.0.2"
       source  = "github.com/hashicorp/amazon"
     }
+    
+    hashistack = {
+      version = ">= 0.0.42"
+      source  = "github.com/QubitPi/hashistack"
+    }
   }
 }
 
 source "amazon-ebs" "hashistack" {
-  ami_name              = "packer-plugin-hashistack-acc-test-ami"
+  ami_name              = "my-webservice"
   force_deregister      = "true"
   force_delete_snapshot = "true"
 

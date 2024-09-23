@@ -8,8 +8,8 @@ HashiStack Packer Plugin
 ![GitHub Last Commit]
 [![Apache License][Apache License Badge]][Apache License URL]
 
-The hashistack multi-component plugin can be used with HashiCorp [Packer][HashiCorp Packer] to create images
-supported by [hashistack]. For the full list of available features for this plugin see [docs](./docs).
+The hashistack multi-component plugin can be used with HashiCorp [Packer][HashiCorp Packer] to create images hosted in
+[hashistack]. For the full list of available features for this plugin see [docs](./docs).
 
 Installation
 ------------
