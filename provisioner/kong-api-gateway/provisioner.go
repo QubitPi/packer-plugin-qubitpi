@@ -50,7 +50,16 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 		return err
 	}
 
-	return ssl.Provision(ctx, p.config.ctx, ui, communicator, p.config.HomeDir, p.config.SslCertBase64, p.config.SslCertKeyBase64, getNginxConfig(p.config.KongApiGatewayDomain))
+	return ssl.Provision(
+		ctx,
+		p.config.ctx,
+		ui,
+		communicator,
+		p.config.HomeDir,
+		p.config.SslCertBase64,
+		p.config.SslCertKeyBase64,
+		getNginxConfig(p.config.KongApiGatewayDomain),
+	)
 }
 
 func getCommands() []string {
