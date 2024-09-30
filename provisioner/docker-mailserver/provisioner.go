@@ -55,7 +55,8 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	composeFileSource, err := ssl.WriteToFile(composeFile)
 	err = file.Provision(p.config.ctx, ui, communicator, composeFileSource, composeFileDst)
 	if err != nil {
-		return fmt.Errorf("error uploading '%s' to '%s': %s", composeFileSource, composeFileDst, err)
+		ui.Say(fmt.Sprintf("error uploading '%s' to '%s': %s", composeFileSource, composeFileDst, err))
+		panic(err)
 	}
 
 	sslCert, err := ssl.DecodeBase64(p.config.SslCertBase64)
@@ -63,7 +64,8 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	sslCertDestination := fmt.Sprintf(filepath.Join(p.config.HomeDir, "fullchain.pem"))
 	err = file.Provision(p.config.ctx, ui, communicator, sslCertSource, sslCertDestination)
 	if err != nil {
-		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertSource, sslCertDestination, err)
+		ui.Say(fmt.Sprintf("error uploading '%s' to '%s': %s", sslCertSource, sslCertDestination, err))
+		panic(err)
 	}
 
 	sslCertKey, err := ssl.DecodeBase64(p.config.SslCertKeyBase64)
@@ -71,7 +73,8 @@ func (p *Provisioner) Provision(ctx context.Context, ui packersdk.Ui, communicat
 	sslCertKeyDestination := fmt.Sprintf(filepath.Join(p.config.HomeDir, "privkey.pem"))
 	err = file.Provision(p.config.ctx, ui, communicator, sslCertKeySource, sslCertKeyDestination)
 	if err != nil {
-		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertKeySource, sslCertKeyDestination, err)
+		ui.Say(fmt.Sprintf("error uploading '%s' to '%s': %s", sslCertKeySource, sslCertKeyDestination, err))
+		panic(err)
 	}
 
 	return shell.Provision(ctx, ui, communicator, getCommands(p.config.HomeDir, mailServerDomain, sslCertDestination, sslCertKeyDestination))
