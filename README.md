@@ -6,7 +6,7 @@ HashiStack Packer Plugin
 ![HashiCorp Packer SDK Badge][HashiCorp Packer SDK Badge]
 [![GitHub Workflow Status][GitHub Workflow Status badge]][GitHub Workflow Status URL]
 ![GitHub Last Commit]
-[![Apache License][Apache License Badge]][Apache License URL]
+[![Apache License][Apache License Badge]][Apache License, Version 2.0]
 
 The hashistack multi-component plugin can be used with HashiCorp [Packer][HashiCorp Packer] to create images hosted in
 [hashistack]. For the full list of available features for this plugin see [docs](./docs).
@@ -142,15 +142,8 @@ License
 
 The use and distribution terms for [packer-plugin-hashistack] are covered by the [Apache License, Version 2.0].
 
-<div align="center">
-    <a href="https://opensource.org/licenses">
-        <img align="center" width="50%" alt="License Illustration" src="https://github.com/QubitPi/QubitPi/blob/master/img/apache-2.png?raw=true">
-    </a>
-</div>
-
 [Apache License Badge]: https://img.shields.io/badge/Apache%202.0-F25910.svg?style=for-the-badge&logo=Apache&logoColor=white
-[Apache License URL]: https://www.apache.org/licenses/LICENSE-2.0
-[Apache License, Version 2.0]: http://www.apache.org/licenses/LICENSE-2.0.html
+[Apache License, Version 2.0]:  https://www.apache.org/licenses/LICENSE-2.0
 
 [GitHub Last Commit]: https://img.shields.io/github/last-commit/QubitPi/packer-plugin-hashistack/master?logo=github&style=for-the-badge
 [GitHub Workflow Status badge]: https://img.shields.io/github/actions/workflow/status/QubitPi/packer-plugin-hashistack/ci-cd.yml?branch=master&logo=github&style=for-the-badge
