@@ -52,9 +52,8 @@ packer {
       version = ">= 0.0.2"
       source  = "github.com/hashicorp/amazon"
     }
-    
     hashistack = {
-      version = ">= 0.0.42"
+      version = ">= 0.0.45"
       source  = "github.com/QubitPi/hashistack"
     }
   }
