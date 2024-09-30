@@ -61,7 +61,7 @@ func CommandsInstallingSudoLessDocker() []string {
 		"sudo apt update && sudo apt upgrade -y",
 		"sudo apt install git software-properties-common -y",
 
-		"git clone https://github.com/QubitPi/docker-install.git && cd docker-install && sh install.sh",
+		"git clone https://github.com/QubitPi/docker-install.git && cd docker-install && sh install.sh && cd ..",
 		"sudo usermod -aG docker ${USER}",
 		"sudo chmod o+rw /var/run/docker.sock",
 	}
