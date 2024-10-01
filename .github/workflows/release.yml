@@ -42,9 +42,6 @@ jobs:
     needs:
       - push-release-tag
       - get-go-version
-    outputs:
-      outcome: ${{ job.status }}
-    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
