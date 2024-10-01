@@ -91,9 +91,6 @@ jobs:
   acceptance-tests:
     name: Packer Plugin Acceptance Tests
     needs: [tests, docker-image]
-    outputs:
-      outcome: ${{ job.status }}
-    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -111,16 +108,15 @@ jobs:
       - name: Install plugin
         run: packer plugins install --path packer-plugin-hashistack github.com/QubitPi/hashistack
       - name: Run all acceptance tests
-        continue-on-error: true
         run: PACKER_ACC=1 go test -count 1 -v ./... -timeout=120m
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Upload test logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: "acc-test-log"
-          path: provisioner/**/packer_log_**.txt
+#      - name: Upload test logs
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: "acc-test-log"
+#          path: provisioner/**/packer_log_**.txt
 
   release:
     needs: [acceptance-tests]
