@@ -73,12 +73,3 @@ jobs:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           API_VERSION: ${{ steps.plugin_describe.outputs.api_version }}
-
-  slack-notification:
-    name: Send Slack Notification
-    needs: goreleaser
-    uses: QubitPi/hashistack/.github/workflows/slack-notification.yml@master
-    with:
-      job-status: ${{ needs.goreleaser.outputs.outcome }}
-    secrets:
-      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
