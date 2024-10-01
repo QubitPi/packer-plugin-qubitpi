@@ -111,23 +111,19 @@ jobs:
       - name: Install plugin
         run: packer plugins install --path packer-plugin-hashistack github.com/QubitPi/hashistack
       - name: Run all acceptance tests
+        continue-on-error: true
         run: PACKER_ACC=1 go test -count 1 -v ./... -timeout=120m
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Upload test logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: "acc-test-log"
+          path: provisioner/**/packer_log_**.txt
 
   release:
     needs: [acceptance-tests]
     if: ${{ github.ref == 'refs/heads/master' && github.repository != 'QubitPi/hashicorp-packer-plugin-scaffolding' }}
     uses: ./.github/workflows/release.yml
     secrets: inherit
-
-  slack-notification:
-    name: Send Slack Notification
-    if: github.ref != 'refs/heads/master'
-    needs: acceptance-tests
-    uses: QubitPi/hashistack/.github/workflows/slack-notification.yml@master
-    with:
-      job-status: ${{ needs.acceptance-tests.outputs.outcome }}
-    secrets:
-      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}

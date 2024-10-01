@@ -46,7 +46,8 @@ import (
 func Provision(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, commands []string) error {
 	scriptFile, err := loadCommandsIntoScript(commands)
 	if err != nil {
-		return err
+		ui.Say(fmt.Sprintf("Error loading commands into script: %s", err))
+		panic(err)
 	}
 	defer os.Remove(scriptFile.Name())
 
@@ -95,7 +96,8 @@ func loadCommandsIntoScript(commands []string) (*os.File, error) {
 func executeScript(ctx context.Context, ui packersdk.Ui, communicator packersdk.Communicator, scriptFile *os.File) error {
 	f, err := os.Open(scriptFile.Name())
 	if err != nil {
-		return fmt.Errorf("error opening shell script: %s", err)
+		ui.Say(fmt.Sprintf("error opening shell script: %s", err))
+		panic(err)
 	}
 	defer f.Close()
 
@@ -107,14 +109,16 @@ func executeScript(ctx context.Context, ui packersdk.Ui, communicator packersdk.
 
 		remotePath := fmt.Sprintf("%s/%s", "/tmp", fmt.Sprintf("script_%d.sh", rand.Intn(9999)))
 		if err := communicator.Upload(remotePath, f, nil); err != nil {
-			return fmt.Errorf("error uploading script: %s", err)
+			ui.Say(fmt.Sprintf("error uploading script: %s", err))
+			panic(err)
 		}
 
 		cmd = &packersdk.RemoteCmd{
 			Command: fmt.Sprintf("chmod 0755 %s", remotePath),
 		}
 		if err := communicator.Start(ctx, cmd); err != nil {
-			return fmt.Errorf("error chmodding script file to 0755 in remote machine: %s", err)
+			ui.Say(fmt.Sprintf("error chmodding script file to 0755 in remote machine: %s", err))
+			panic(err)
 		}
 		cmd.Wait()
 

@@ -43,8 +43,8 @@ build {
   provisioner "hashistack-react-provisioner" {
     distSource       = "/my/path/to/dist"
     homeDir          = "/home/ubuntu"
-    sslCertBase64    = "YXNkZnNnaHRkeWhyZXJ3ZGZydGV3ZHNmZ3RoeTY0cmV3ZGZyZWd0cmV3d2ZyZw=="
-    sslCertKeyBase64 = "MzI0NXRnZjk4dmJoIGNsO2VbNDM1MHRdzszNDM1b2l0cmo="
+    sslCertBase64    = "VGhpcyBpcyBhIHRlc3QgY2VydA=="
+    sslCertKeyBase64 = "VGhpcyBpcyBhIHRlc3QgY2VydA=="
     appDomain        = "app.mycompany.com"
   }
 }

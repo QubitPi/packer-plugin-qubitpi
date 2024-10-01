@@ -35,27 +35,39 @@ func Provision(
 	nginxConfig string,
 ) error {
 	sslCert, err := DecodeBase64(sslCertBase64)
+	if err != nil {
+		ui.Say(fmt.Sprintf("Error decoding SSL cert base64: %s", err))
+		panic(err)
+	}
 	sslCertSource, err := WriteToFile(sslCert)
 	sslCertDestination := fmt.Sprintf(filepath.Join(homeDir, sslCertFilename))
 	err = file.Provision(interCtx, ui, communicator, sslCertSource, sslCertDestination)
 	if err != nil {
-		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertSource, sslCertDestination, err)
+		ui.Say(fmt.Sprintf("error uploading '%s' to '%s': %s", sslCertSource, sslCertDestination, err))
+		panic(err)
 	}
 
 	sslCertKey, err := DecodeBase64(sslCertKeyBase64)
+	if err != nil {
+		ui.Say(fmt.Sprintf("Error decoding SSL cert key base64: %s", err))
+		panic(err)
+	}
 	sslCertKeySource, err := WriteToFile(sslCertKey)
 	sslCertKeyDestination := fmt.Sprintf(filepath.Join(homeDir, sslCertKeyFilename))
 	err = file.Provision(interCtx, ui, communicator, sslCertKeySource, sslCertKeyDestination)
 	if err != nil {
-		return fmt.Errorf("error uploading '%s' to '%s': %s", sslCertKeySource, sslCertKeyDestination, err)
+		ui.Say(fmt.Sprintf("error uploading '%s' to '%s': %s", sslCertKeySource, sslCertKeyDestination, err))
+		panic(err)
 	}
 
 	if nginxConfig != "" {
 		nginxSource, err := WriteToFile(nginxConfig)
 		nginxDst := fmt.Sprintf(filepath.Join(homeDir, nginxConfigFilename))
 		err = file.Provision(interCtx, ui, communicator, nginxSource, nginxDst)
+
 		if err != nil {
-			return fmt.Errorf("error uploading '%s' to '%s': %s", nginxSource, nginxDst, err)
+			ui.Say(fmt.Sprintf("error uploading '%s' to '%s': %s", nginxSource, nginxDst, err))
+			panic(err)
 		}
 	}
 
@@ -100,7 +112,7 @@ func WriteToFile(content string) (string, error) {
 func DecodeBase64(encoded string) (string, error) {
 	data, err := base64.StdEncoding.DecodeString(encoded)
 	if err != nil {
-		return "", fmt.Errorf("error interpolating destination: %s", err)
+		return "", fmt.Errorf("error decoding base64 string: %s", err)
 	}
 	return string(data), nil
 }

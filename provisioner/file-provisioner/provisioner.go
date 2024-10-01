@@ -16,12 +16,14 @@ import (
 func Provision(ctx interpolate.Context, ui packersdk.Ui, communicator packersdk.Communicator, source string, destination string) error {
 	src, err := interpolate.Render(source, &ctx)
 	if err != nil {
-		return fmt.Errorf("error interpolating source: %s", err)
+		ui.Say(fmt.Sprintf("error interpolating source: %s", err))
+		panic(err)
 	}
 
 	dst, err := interpolate.Render(destination, &ctx)
 	if err != nil {
-		return fmt.Errorf("error interpolating destination: %s", err)
+		ui.Say(fmt.Sprintf("error interpolating destination: %s", err))
+		panic(err)
 	}
 
 	ui.Say(fmt.Sprintf("Uploading %s => %s", src, dst))
