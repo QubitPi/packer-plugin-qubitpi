@@ -41,3 +41,16 @@ func TestGetHomeDir(t *testing.T) {
 		})
 	}
 }
+
+func TestDecodeBase64(t *testing.T) {
+	encoded := "dGhpcyBpcyBhIHRlc3Qga2V5"
+	decoded := "this is a test key"
+	actual, err := DecodeBase64(encoded)
+	if err != nil {
+		t.Errorf("Error decoding %s", encoded)
+	}
+
+	if actual != decoded {
+		t.Errorf("Wrong decode: '%s'. Should be '%s'", actual, decoded)
+	}
+}
