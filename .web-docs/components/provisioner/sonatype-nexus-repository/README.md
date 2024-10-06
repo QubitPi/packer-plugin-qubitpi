@@ -45,7 +45,7 @@ packer {
       source  = "github.com/hashicorp/amazon"
     }
     qubitpi = {
-      version = ">= 0.0.45"
+      version = ">= 0.0.50"
       source  = "github.com/QubitPi/qubitpi"
     }
   }
