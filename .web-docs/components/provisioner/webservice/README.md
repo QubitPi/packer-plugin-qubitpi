@@ -52,14 +52,14 @@ packer {
       version = ">= 0.0.2"
       source  = "github.com/hashicorp/amazon"
     }
-    hashistack = {
+    qubitpi = {
       version = ">= 0.0.45"
-      source  = "github.com/QubitPi/hashistack"
+      source  = "github.com/QubitPi/qubitpi"
     }
   }
 }
 
-source "amazon-ebs" "hashistack" {
+source "amazon-ebs" "qubitpi" {
   ami_name              = "my-webservice"
   force_deregister      = "true"
   force_delete_snapshot = "true"
@@ -86,10 +86,10 @@ source "amazon-ebs" "hashistack" {
 
 build {
   sources = [
-    "source.amazon-ebs.hashistack"
+    "source.amazon-ebs.qubitpi"
   ]
 
-  provisioner "hashistack-webservice-provisioner" {
+  provisioner "qubitpi-webservice-provisioner" {
     homeDir   = "/home/ubuntu"
     warSource = "my-webservice.war"
   }

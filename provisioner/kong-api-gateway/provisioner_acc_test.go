@@ -31,7 +31,7 @@ func TestAccKongAPIGatewayProvisioner(t *testing.T) {
 			return nil
 		},
 		Template: testProvisionerHCL2AWS,
-		Type:     "hashistack-kong-api-gateway-provisioner",
+		Type:     "qubitpi-kong-api-gateway-provisioner",
 		Check: func(buildCommand *exec.Cmd, logfile string) error {
 			if buildCommand.ProcessState != nil {
 				if buildCommand.ProcessState.ExitCode() != 0 {
@@ -56,7 +56,7 @@ func TestAccKongAPIGatewayProvisioner(t *testing.T) {
 				t.Fatalf("%s\n Acceptance tests for %s failed. Please search for '%s' in log file at %s", logsString, "kong-api-gateway provisioner", errorString, logfile)
 			}
 
-			provisionerOutputLog := "amazon-ebs.hashistack: AMIs were created:"
+			provisionerOutputLog := "amazon-ebs.qubitpi: AMIs were created:"
 			if matched, _ := regexp.MatchString(provisionerOutputLog+".*", logsString); !matched {
 				t.Fatalf("%s\n logs doesn't contain expected output %q", logsString, provisionerOutputLog)
 			}
@@ -74,7 +74,7 @@ func TestAccKongAPIGatewayProvisioner(t *testing.T) {
 			return nil
 		},
 		Template: testProvisionerHCL2Docker,
-		Type:     "hashistack-kong-api-gateway-provisioner",
+		Type:     "qubitpi-kong-api-gateway-provisioner",
 		Check: func(buildCommand *exec.Cmd, logfile string) error {
 			if buildCommand.ProcessState != nil {
 				if buildCommand.ProcessState.ExitCode() != 0 {
@@ -99,7 +99,7 @@ func TestAccKongAPIGatewayProvisioner(t *testing.T) {
 				t.Fatalf("Acceptance tests for %s failed. Please search for '%s' in log file at %s", "kong-api-gateway-provisioner provisioner", errorString, logfile)
 			}
 
-			provisionerOutputLog := "docker.hashistack: Exported Docker file:"
+			provisionerOutputLog := "docker.qubitpi: Exported Docker file:"
 			if matched, _ := regexp.MatchString(provisionerOutputLog+".*", logsString); !matched {
 				t.Fatalf("logs doesn't contain expected output %q", logsString)
 			}

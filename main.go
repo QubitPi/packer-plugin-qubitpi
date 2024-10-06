@@ -5,14 +5,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/QubitPi/packer-plugin-hashistack/provisioner/react"
-	artifactory "github.com/QubitPi/packer-plugin-hashistack/provisioner/sonatype-nexus-repository"
-	"github.com/QubitPi/packer-plugin-hashistack/provisioner/webservice"
+	"github.com/QubitPi/packer-plugin-qubitpi/provisioner/react"
+	artifactory "github.com/QubitPi/packer-plugin-qubitpi/provisioner/sonatype-nexus-repository"
+	"github.com/QubitPi/packer-plugin-qubitpi/provisioner/webservice"
 	"os"
 
-	mailserver "github.com/QubitPi/packer-plugin-hashistack/provisioner/docker-mailserver"
-	gateway "github.com/QubitPi/packer-plugin-hashistack/provisioner/kong-api-gateway"
-	pluginVersion "github.com/QubitPi/packer-plugin-hashistack/version"
+	mailserver "github.com/QubitPi/packer-plugin-qubitpi/provisioner/docker-mailserver"
+	gateway "github.com/QubitPi/packer-plugin-qubitpi/provisioner/kong-api-gateway"
+	pluginVersion "github.com/QubitPi/packer-plugin-qubitpi/version"
 
 	"github.com/hashicorp/packer-plugin-sdk/plugin"
 )

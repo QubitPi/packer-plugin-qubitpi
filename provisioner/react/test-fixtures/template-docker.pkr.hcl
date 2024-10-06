@@ -10,17 +10,17 @@ packer {
   }
 }
 
-source "docker" "hashistack" {
-  image  = "jack20191124/packer-plugin-hashistack-acc-test-base:latest"
+source "docker" "qubitpi" {
+  image  = "jack20191124/packer-plugin-qubitpi-acc-test-base:latest"
   discard = true
 }
 
 build {
   sources = [
-    "source.docker.hashistack"
+    "source.docker.qubitpi"
   ]
 
-  provisioner "hashistack-react-provisioner" {
+  provisioner "qubitpi-react-provisioner" {
     distSource       = "/my/path/to/dist"
     homeDir          = "/"
     sslCertBase64    = "VGhpcyBpcyBhIHRlc3QgY2VydA=="

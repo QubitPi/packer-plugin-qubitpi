@@ -14,9 +14,9 @@ To install this plugin, copy and paste this code into Packer configuration, then
 ```hcl
 packer {
   required_plugins {
-    hashistack = {
+    qubitpi = {
       version = ">= 0.0.42"
-      source = "github.com/QubitPi/hashistack"
+      source = "github.com/QubitPi/qubitpi"
     }
   }
 }
@@ -25,7 +25,7 @@ packer {
 Alternatively, we can use `packer plugins install` to manage installation of this plugin.
 
 ```sh
-$ packer plugins install github.com/QubitPi/hashistack
+$ packer plugins install github.com/QubitPi/qubitpi
 ```
 
 ### Components
@@ -38,7 +38,7 @@ They enable
 1. programmatic configuration management which is not possible with HCL, and
 2. code reuse
 
-The business logics that satisfy the two criteria above are offered as the hashistack provisioners below:
+The business logics that satisfy the two criteria above are offered as the provisioners below:
 
 - [React App](./provisioners/react.mdx)
 - [Sonatype Nexus Repository](./provisioners/sonatype-nexus-repository.mdx)

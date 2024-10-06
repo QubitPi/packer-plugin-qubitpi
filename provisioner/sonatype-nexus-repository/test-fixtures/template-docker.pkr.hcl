@@ -10,17 +10,17 @@ packer {
   }
 }
 
-source "docker" "hashistack" {
-  image  = "jack20191124/packer-plugin-hashistack-acc-test-base:latest"
+source "docker" "qubitpi" {
+  image  = "jack20191124/packer-plugin-qubitpi-acc-test-base:latest"
   discard = true
 }
 
 build {
   sources = [
-    "source.docker.hashistack"
+    "source.docker.qubitpi"
   ]
 
-  provisioner "hashistack-sonatype-nexus-repository-provisioner" {
+  provisioner "qubitpi-sonatype-nexus-repository-provisioner" {
     homeDir                       = "/"
     sslCertBase64                 = "VGhpcyBpcyBhIHRlc3QgY2VydA=="
     sslCertKeyBase64              = "VGhpcyBpcyBhIHRlc3QgY2VydA=="
