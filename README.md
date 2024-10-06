@@ -28,7 +28,7 @@ To install this plugin, copy and paste this code into Packer configuration. Then
 packer {
   required_plugins {
     qubitpi = {
-      version = ">= 0.0.45"
+      version = ">= 0.0.50"
       source = "github.com/QubitPi/qubitpi"
     }
   }

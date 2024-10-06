@@ -1,7 +1,7 @@
 Plugin Acceptance Tests Base Image
 ==================================
 
-[![badge](https://img.shields.io/badge/DockerHub-2596EC?style=for-the-badge&logo=docker&logoColor=white)](https://hub.docker.com/r/jack20191124/packer-plugin-hashistack-acc-test-base)
+[![badge](https://img.shields.io/badge/DockerHub-2596EC?style=for-the-badge&logo=docker&logoColor=white)](https://hub.docker.com/r/jack20191124/packer-plugin-qubitpi-acc-test-base)
 
 This image is used by [packer-plugin-qubitpi](https://github.com/QubitPi/packer-plugin-qubitpi) to perform
 acceptance tests in Docker without the need to test against AWS, which
