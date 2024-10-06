@@ -10,8 +10,8 @@ packer {
   }
 }
 
-source "amazon-ebs" "hashistack" {
-  ami_name              = "packer-plugin-hashistack-acc-test-ami-kong-api-gateway"
+source "amazon-ebs" "qubitpi" {
+  ami_name              = "packer-plugin-qubitpi-acc-test-ami-kong-api-gateway"
   force_deregister      = "true"
   force_delete_snapshot = "true"
 
@@ -37,10 +37,10 @@ source "amazon-ebs" "hashistack" {
 
 build {
   sources = [
-    "source.amazon-ebs.hashistack"
+    "source.amazon-ebs.qubitpi"
   ]
 
-  provisioner "hashistack-kong-api-gateway-provisioner" {
+  provisioner "qubitpi-kong-api-gateway-provisioner" {
     homeDir              = "/home/ubuntu"
     sslCertBase64        = "VGhpcyBpcyBhIHRlc3QgY2VydA=="
     sslCertKeyBase64     = "VGhpcyBpcyBhIHRlc3QgY2VydA=="

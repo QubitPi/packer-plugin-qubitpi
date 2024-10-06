@@ -10,8 +10,8 @@ packer {
   }
 }
 
-source "amazon-ebs" "hashistack" {
-  ami_name              = "packer-plugin-hashistack-acc-test-ami-sonatype-nexus-repository"
+source "amazon-ebs" "qubitpi" {
+  ami_name              = "packer-plugin-qubitpi-acc-test-ami-sonatype-nexus-repository"
   force_deregister      = "true"
   force_delete_snapshot = "true"
 
@@ -37,10 +37,10 @@ source "amazon-ebs" "hashistack" {
 
 build {
   sources = [
-    "source.amazon-ebs.hashistack"
+    "source.amazon-ebs.qubitpi"
   ]
 
-  provisioner "hashistack-sonatype-nexus-repository-provisioner" {
+  provisioner "qubitpi-sonatype-nexus-repository-provisioner" {
     homeDir                       = "/home/ubuntu"
     sslCertBase64                 = "VGhpcyBpcyBhIHRlc3QgY2VydA=="
     sslCertKeyBase64              = "VGhpcyBpcyBhIHRlc3QgY2VydA=="

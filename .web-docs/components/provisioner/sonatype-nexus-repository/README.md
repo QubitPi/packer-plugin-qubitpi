@@ -11,12 +11,11 @@ The `sonatype-nexus-repository` provisioner is used to install Sonatype Nexus Re
 **Required**
 
 - `sonatypeNexusRepositoryDomain` (string) - the SSL-enabled domain that will serve the deployed HTTP Nexus instance.
-- `sslCertBase64` (string) - is a __base64 encoded__ string of the content of
-  [SSL certificate file](https://hashistack.org/docs/setup#optional-setup-ssl) for the SSL-enabled domain, for
-  example `nexus.mycompany.com` given the `sonatypeNexusRepositoryDomain` is `nexus.mycompany.com`.
-- `sslCertKeyBase64` (string) - is a __base64 encoded__ string of the content of
-  [SSL certificate key file](https://hashistack.org/docs/setup#optional-setup-ssl) for the SSL-enabled domain, for
-  example `nexus.mycompany.com` given the `sonatypeNexusRepositoryDomain` is `nexus.mycompany.com`.
+- `sslCertBase64` (string) - is a __base64 encoded__ string of the content of SSL certificate file for the SSL-enabled
+  domain, for example `nexus.mycompany.com` given the `sonatypeNexusRepositoryDomain` is `nexus.mycompany.com`.
+- `sslCertKeyBase64` (string) - is a __base64 encoded__ string of the content of SSL certificate key file for the
+  SSL-enabled domain, for example `nexus.mycompany.com` given the `sonatypeNexusRepositoryDomain` is
+  `nexus.mycompany.com`.
 
 <!--
   Optional Configuration Fields
@@ -45,15 +44,15 @@ packer {
       version = ">= 0.0.2"
       source  = "github.com/hashicorp/amazon"
     }
-    hashistack = {
+    qubitpi = {
       version = ">= 0.0.45"
-      source  = "github.com/QubitPi/hashistack"
+      source  = "github.com/QubitPi/qubitpi"
     }
   }
 }
 
-source "amazon-ebs" "hashistack" {
-  ami_name              = "packer-plugin-hashistack-acc-test-ami"
+source "amazon-ebs" "qubitpi" {
+  ami_name              = "packer-plugin-qubitpi-acc-test-ami"
   force_deregister      = "true"
   force_delete_snapshot = "true"
 
@@ -79,10 +78,10 @@ source "amazon-ebs" "hashistack" {
 
 build {
   sources = [
-    "source.amazon-ebs.hashistack"
+    "source.amazon-ebs.qubitpi"
   ]
 
-  provisioner "hashistack-sonatype-nexus-repository-provisioner" {
+  provisioner "qubitpi-sonatype-nexus-repository-provisioner" {
     homeDir                       = "/home/ubuntu"
     sslCertBase64                 = "YXNkZnNnaHRkeWhyZXJ3ZGZydGV3ZHNmZ3RoeTY0cmV3ZGZyZWd0cmV3d2ZyZw=="
     sslCertKeyBase64              = "MzI0NXRnZjk4dmJoIGNsO2VbNDM1MHRdzszNDM1b2l0cmo="

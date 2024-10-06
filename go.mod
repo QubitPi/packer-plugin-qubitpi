@@ -1,4 +1,4 @@
-module github.com/QubitPi/packer-plugin-hashistack
+module github.com/QubitPi/packer-plugin-qubitpi
 
 go 1.20
 

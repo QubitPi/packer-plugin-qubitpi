@@ -13,12 +13,10 @@ The `react` provisioner is used to install a compiled React-based APP in AWS AMI
 - `distSource` (string) - The path to a local dist file to upload to the machine. The path can be absolute or relative.
    If it is relative, it is relative to the working directory when Packer is executed.
 - `appDomain` (string) - the SSL-enabled domain that will serve the deployed HTTP React APP instance.
-- `sslCertBase64` (string) - is a __base64 encoded__ string of the content of
-  [SSL certificate file](https://hashistack.org/docs/setup#optional-setup-ssl) for the SSL-enabled domain, for
-  example `app.mycompany.com` given the `appDomain` is `app.mycompany.com`.
-- `sslCertKeyBase64` (string) - is a __base64 encoded__ string of the content of
-  [SSL certificate key file](https://hashistack.org/docs/setup#optional-setup-ssl) for the SSL-enabled domain, for
-  example `app.mycompany.com` given the `appDomain` is `app.mycompany.com`.
+- `sslCertBase64` (string) - is a __base64 encoded__ string of the content of SSL certificate file for the SSL-enabled
+  domain, for example `app.mycompany.com` given the `appDomain` is `app.mycompany.com`.
+- `sslCertKeyBase64` (string) - is a __base64 encoded__ string of the content of SSL certificate key file for the SSL
+  enabled domain, for example `app.mycompany.com` given the `appDomain` is `app.mycompany.com`.
 
 
 <!--
@@ -49,15 +47,15 @@ packer {
       version = ">= 0.0.2"
       source  = "github.com/hashicorp/amazon"
     }
-    hashistack = {
+    qubitpi = {
       version = ">= 0.0.45"
-      source = "github.com/QubitPi/hashistack"
+      source = "github.com/QubitPi/qubitpi"
     }
   }
 }
 
-source "amazon-ebs" "hashistack" {
-  ami_name              = "packer-plugin-hashistack-acc-test-ami-react"
+source "amazon-ebs" "qubitpi" {
+  ami_name              = "packer-plugin-qubitpi-acc-test-ami-react"
   force_deregister      = "true"
   force_delete_snapshot = "true"
 
@@ -83,10 +81,10 @@ source "amazon-ebs" "hashistack" {
 
 build {
   sources = [
-    "source.amazon-ebs.hashistack"
+    "source.amazon-ebs.qubitpi"
   ]
 
-  provisioner "hashistack-react-provisioner" {
+  provisioner "qubitpi-react-provisioner" {
     distSource       = "./dist"
     homeDir          = "/home/ubuntu"
     sslCertBase64    = "YXNkZnNnaHRkeWhyZXJ3ZGZydGV3ZHNmZ3RoeTY0cmV3ZGZyZWd0cmV3d2ZyZw=="

@@ -8,8 +8,8 @@ package artifactory
 import (
 	"bytes"
 	"context"
-	"github.com/QubitPi/packer-plugin-hashistack/provisioner/shell"
-	"github.com/QubitPi/packer-plugin-hashistack/provisioner/ssl-provisioner"
+	"github.com/QubitPi/packer-plugin-qubitpi/provisioner/shell"
+	"github.com/QubitPi/packer-plugin-qubitpi/provisioner/ssl-provisioner"
 	"github.com/hashicorp/hcl/v2/hcldec"
 	packersdk "github.com/hashicorp/packer-plugin-sdk/packer"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
